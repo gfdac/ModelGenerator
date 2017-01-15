@@ -1,34 +1,44 @@
+def isInt(val):
+    return val == int(val)
+
+
 class Modelo:
     name = ""
     propriedades = []
     metodos = []
 
-    def f(self):
-        return 'hello world'
+    def __init__(self):
+        print("Model Class Inited")
+
+    def addproperty(self, p):
+        self.propriedades.append(p)
+
+    def addmethod(self, m):
+        self.metodos.append(m)
 
 
 class Propriedade:
     name = ""
     tipo = ""
-    valor = None
-
-    def f(self):
-        return 'hello world'
 
 
 class Metodo:
     name = ""
     parametros = []
 
-    def f(self):
-        return 'hello world'
+
+class Parametro:
+    name = ""
+    tipo = ""
+    valor = None
+    valor = None
 
 
 modelo = Modelo()
 
-my_list = ["Integer", "String", "Float", "Array[]", "Objeto{}"]
+tipos = ["[0]Integer", "[1]String", "[2]Float", "[3]Array[]", "[4]Objeto{}", "[5]Others..."]
 
-exporters = ["Javascript", "Java"]
+exporters = ["[0]Javascript CommonJS", "[1]Javascript Simples", "[2]Java"]
 
 modelo.name = input("Nome do Modelo")
 
@@ -40,14 +50,19 @@ modelo.name = input("Nome do Modelo")
 # expotar classe para a linguagem escolhida
 
 def addProperty(i):
-    tipos = ""
+    t = ""
 
     print("Escolha um tipo:")
-    for member in my_list:
-        tipos = tipos + " - " + member
-    print(tipos)
+    for member in tipos:
+        t = t + " - " + member
+    print(t)
 
-    tipo = input()
+    numerico = int(input())
+    # obtem o item da lista de acordo com o indice inputado
+    tipo = tipos.__getitem__(numerico)
+
+    # TODO: Verificar se int foi inputado, senao tentar de novo, modularizar trecho
+
     valor = input("Entre valor inicial para o campo " + i + ":")
 
     p = Propriedade()
@@ -55,19 +70,22 @@ def addProperty(i):
     p.tipo = tipo
     p.valor = valor
 
-    modelo.propriedades.append(p)
+    # modelo.propriedades.append(p)
+    modelo.addproperty(p)
 
 
 while True:
-    i = input("Entre o nome da propriedade (ou Enter para sair): ")
-    if not i:
+    p = input("Entre o nome da propriedade (ou Enter para sair): ")
+    if not p:
         break
-    addProperty(i)
+    addProperty(p)
     # print("Property While loop has exited")
 
 
-def addMethod(i):
-    modelo.metodos.append(i)
+def addMethod(m):
+    modelo.addmethod(m)
+    # modelo.metodos.append(m)
+    # TODO: //ADD LOOP for add Parameter for this method
 
 
 while True:
@@ -85,52 +103,82 @@ def isNotEmpty(s):
     return bool(s and s.strip())
 
 
-def createProperty(p):
+def createPropertyCommonJS(p):
     if p.tipo == "String" and not p.valor == None:
-        print("var " + p.name + " = '" + p.valor + "';")
+        print("     var " + p.name + " = '" + p.valor + "';")
     elif p.tipo == "String" and p.valor == None:
-        print("var " + p.name + " = '';")
+        print("     var " + p.name + " = '';")
     else:
-        print("var " + p.name + " = null;")
+        print("     var " + p.name + " = null;")
 
 
-def createDefineProperty(p):
-    print("Object.defineProperty(this, '" + p.name + "', {")
-    print("     get: function() {")
-    print("         return " + p.name + ";");
-    print("},")
-    print("set: function(valor)")
-    print("{")
-    print(p.name + " = valor;")
-    print("},")
-    print("configurable: false,")
-    print("enumerable: true")
-    print("});")
+def createDefinePropertyCommonJS(p):
+    print("     Object.defineProperty(this, '" + p.name + "', {")
+    print("         get: function() {")
+    print("             return " + p.name + ";");
+    print("     },")
+    print("     set: function(valor)")
+    print("     {")
+    print("     " + p.name + " = valor;")
+    print("     },")
+    print("         configurable: false,")
+    print("         enumerable: true")
+    print("     });")
 
 
-def createMetodhs(m):
+def createMetodhsCommonJS(m):
     print("     function " + m.name + "(){};")
 
 
-e = ""
-
-print("Escolha uma linguagem:")
-for member in exporters:
-    e = e + " - " + member
-print(e)
-
-exportar = input()
-
-if exportar == "Javascript":
+def commonjsExporter():
     print("function " + modelo.name + "() {")
     for p in modelo.propriedades:
-        createProperty(p)
+        createPropertyCommonJS(p)
     for p in modelo.propriedades:
-        createDefineProperty(p)
+        createDefinePropertyCommonJS(p)
     for m in modelo.metodos:
-        createMetodhs(m)
+        createMetodhsCommonJS(m)
     print("}")
-elif exportar == "Java":
+
+
+def jssimplestExporter():
+    print("function " + modelo.name + "() {")
+    for p in modelo.propriedades:
+        createPropertyCommonJS(p)
+    # for p in modelo.propriedades:
+    #     createDefinePropertyjsSimplest(p)
+    for m in modelo.metodos:
+        createMetodhsCommonJS(m)
+    print("}")
+
+
+def javaExporter():
     print("Under development")
-else:
-    print("Other typers soon")
+
+
+def gerarExport():
+    # full exporter text options for user knowlegment
+    e = ""
+    print("Escolha uma linguagem:")
+    for member in exporters:
+        e = e + " - " + member
+    print(e)
+
+    exportar = int(input())
+
+    # Javascript CommonJS Exporter
+    if exportar == 0:
+        commonjsExporter()
+    # Javascript Simplest Way
+    elif exportar == 1:
+        jssimplestExporter()
+    # Java exporter
+    elif exportar == 2:
+        javaExporter()
+        gerarExport()
+    else:
+        print("Other typers soon")
+        gerarExport()
+
+
+gerarExport()
