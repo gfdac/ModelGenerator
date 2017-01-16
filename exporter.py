@@ -74,7 +74,7 @@ def gerarExport(modelo):
         gerarExport()
 
 
-def addProperty(modelo, i):
+def addProperty(modelo, p):
     num = None
     while True:  # This constructs an infinite loop
         t = ""
@@ -91,15 +91,15 @@ def addProperty(modelo, i):
     # obtem o item da lista de acordo com o indice inputado
     tipo = tipos.__getitem__(numerico)
 
-    valor = input("Entre valor inicial para o campo " + i + ":")
+    valor = input("Entre valor inicial para o campo " + p + ":")
 
-    p = Propriedade()
-    p.name = i
-    p.tipo = tipo
-    p.valor = valor
+    property = Propriedade()
+    property.name = p
+    property.tipo = str(numerico)
+    property.valor = valor
 
-    # modelo.propriedades.append(p)
-    modelo.addproperty(p)
+    # modelo.propriedades.append(property)
+    modelo.addproperty(property)
 
 
 def addMethod(modelo, m):
@@ -113,9 +113,9 @@ def isNotEmpty(s):
 
 
 def createPropertyCommonJS(p):
-    if p.tipo == "String" and p.valor is not None:
+    if p.tipo == "1" and p.valor is not None:
         print("     var " + p.name + " = '" + p.valor + "';")
-    elif p.tipo == "String" and p.valor is None:
+    elif p.tipo == "1" and p.valor is None:
         print("     var " + p.name + " = '';")
     else:
         print("     var " + p.name + " = null;")
@@ -170,7 +170,11 @@ def whileProperties(modelo):
         p = input("Entre o nome da propriedade (ou Enter para sair): ")
         if not p:
             break
-        modelo.addproperty(p)
+        # modelo.addproperty(p)
+        # prop = Propriedade()
+        # prop.name = p
+        # prop.tipo = ""
+        addProperty(modelo, p)
         # print("Property While loop has exited")
 
 
