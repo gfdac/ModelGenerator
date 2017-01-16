@@ -1,3 +1,7 @@
+tipos = ["[0]Integer", "[1]String", "[2]Float", "[3]Array[]", "[4]Objeto{}", "[5]Others..."]
+exporters = ["[0]Javascript CommonJS", "[1]Javascript Simples", "[2]Java", "[3]Todos"]
+
+
 def isInt(val):
     return val == int(val)
 
@@ -34,34 +38,56 @@ class Parametro:
     valor = None
 
 
-modelo = Modelo()
+def gerarExport():
+    num = None
+    while True:  # This constructs an infinite loop
+        # full exporter text options for user knowlegment
+        e = ""
+        print("Escolha uma linguagem:")
+        for member in exporters:
+            e = e + " - " + member
+        print(e)
+        num = input("")
+        if isInt(int(num)):
+            break
 
-tipos = ["[0]Integer", "[1]String", "[2]Float", "[3]Array[]", "[4]Objeto{}", "[5]Others..."]
+    exportar = int(num)
 
-exporters = ["[0]Javascript CommonJS", "[1]Javascript Simples", "[2]Java"]
+    # Javascript CommonJS Exporter
+    if exportar == 0:
+        commonjsExporter()
+    # Javascript Simplest Way
+    elif exportar == 1:
+        jssimplestExporter()
+    # Java exporter
+    elif exportar == 2:
+        javaExporter()
+    # Todos
+    elif exportar == 3:
+        commonjsExporter()
+        jssimplestExporter()
+        javaExporter()
+    else:
+        print("Other typers soon")
+        gerarExport()
 
-modelo.name = input("Nome do Modelo")
-
-
-# adicionar propriedade
-
-# adicionar metodos
-
-# expotar classe para a linguagem escolhida
 
 def addProperty(i):
-    t = ""
+    num = None
+    while True:  # This constructs an infinite loop
+        t = ""
+        print("Escolha um tipo:")
+        for member in tipos:
+            t = t + " - " + member
+        print(t)
+        num = input("")
 
-    print("Escolha um tipo:")
-    for member in tipos:
-        t = t + " - " + member
-    print(t)
+        if isInt(int(num)):
+            break
 
-    numerico = int(input())
+    numerico = int(num)
     # obtem o item da lista de acordo com o indice inputado
     tipo = tipos.__getitem__(numerico)
-
-    # TODO: Verificar se int foi inputado, senao tentar de novo, modularizar trecho
 
     valor = input("Entre valor inicial para o campo " + i + ":")
 
@@ -74,29 +100,10 @@ def addProperty(i):
     modelo.addproperty(p)
 
 
-while True:
-    p = input("Entre o nome da propriedade (ou Enter para sair): ")
-    if not p:
-        break
-    addProperty(p)
-    # print("Property While loop has exited")
-
-
 def addMethod(m):
     modelo.addmethod(m)
     # modelo.metodos.append(m)
     # TODO: //ADD LOOP for add Parameter for this method
-
-
-while True:
-    i = input("Entre o nome do Metodo (ou Enter para sair): ")
-    # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
-    if not i:
-        break
-    m = Metodo()
-    m.name = i
-    addMethod(m)
-    # print("Method While loop has exited")
 
 
 def isNotEmpty(s):
@@ -153,32 +160,27 @@ def jssimplestExporter():
 
 
 def javaExporter():
-    print("Under development")
+    print("Java exporter Under development")
 
 
-def gerarExport():
-    # full exporter text options for user knowlegment
-    e = ""
-    print("Escolha uma linguagem:")
-    for member in exporters:
-        e = e + " - " + member
-    print(e)
+modelo = Modelo()
+modelo.name = input("Nome do Modelo")
 
-    exportar = int(input())
+while True:
+    p = input("Entre o nome da propriedade (ou Enter para sair): ")
+    if not p:
+        break
+    addProperty(p)
+    # print("Property While loop has exited")
 
-    # Javascript CommonJS Exporter
-    if exportar == 0:
-        commonjsExporter()
-    # Javascript Simplest Way
-    elif exportar == 1:
-        jssimplestExporter()
-    # Java exporter
-    elif exportar == 2:
-        javaExporter()
-        gerarExport()
-    else:
-        print("Other typers soon")
-        gerarExport()
-
+while True:
+    i = input("Entre o nome do Metodo (ou Enter para sair): ")
+    # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
+    if not i:
+        break
+    m = Metodo()
+    m.name = i
+    addMethod(m)
+    # print("Method While loop has exited")
 
 gerarExport()
