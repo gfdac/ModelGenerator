@@ -50,8 +50,15 @@ def gerarExport(modelo):
             e = e + " - " + member
         print(e)
         num = input("")
-        if isInt(int(num)):
-            break
+
+        try:
+            if isInt(int(num)) and int(num) < len(exporters):
+                break
+            else:
+                print("Escolha um número válido! Tente novamente...")
+
+        except ValueError:
+            print("Oops!  Este não é um número válido! Tente novamente...")
 
     exportar = int(num)
 
@@ -71,7 +78,6 @@ def gerarExport(modelo):
         javaExporter(modelo)
     else:
         print("Other typers soon")
-        gerarExport()
 
 
 def addProperty(modelo, p):
@@ -84,8 +90,13 @@ def addProperty(modelo, p):
         print(t)
         num = input("")
 
-        if isInt(int(num)):
-            break
+        try:
+            if isInt(int(num)) and int(num) < len(tipos):
+                break
+            else:
+                print("Escolha um número válido! Tente novamente...")
+        except ValueError:
+            print("Oops!  Este não é um número válido! Tente novamente...")
 
     numerico = int(num)
     # obtem o item da lista de acordo com o indice inputado
@@ -136,7 +147,14 @@ def createDefinePropertyCommonJS(p):
 
 
 def createMetodhsCommonJS(m):
-    print("     function " + m.name + "(){};")
+    # TODO: obter a lista de parametros e montar com ela
+
+    parametros = ""
+
+    for param in m.parametros:
+        parametros = parametros + param.name + ", "
+
+    print("     function " + m.name + "(" + parametros.rstrip(', ') + "){};")
 
 
 def commonjsExporter(modelo):
@@ -167,7 +185,7 @@ def javaExporter(modelo):
 
 def whileProperties(modelo):
     while True:
-        p = input("Entre o nome da propriedade (ou Enter para sair): ")
+        p = input("Entre o nome da propriedade (ou Enter para sair): ").replace(" ", "").replace("\t", "")
         if not p:
             break
         # modelo.addproperty(p)
@@ -178,24 +196,49 @@ def whileProperties(modelo):
         # print("Property While loop has exited")
 
 
+def whileMethodsParameters(metodo):
+    lista = []
+    while True:
+        i = input("Entre o nome do parametro para o método " + metodo.name + ": ").replace(" ", "").replace("\t", "")
+        if not i:
+            break
+        p = Parametro()
+        p.name = i
+        # TODO: get from user input!
+        p.tipo = ""
+        p.valor = ""
+
+        lista.append(p)
+
+    metodo.parametros = lista
+
+
 def whileMethods(modelo):
     lista = []
     while True:
-        i = input("Entre o nome do Metodo (ou Enter para sair): ")
+        i = input("Entre o nome do Metodo (ou Enter para sair): ").replace(" ", "").replace("\t", "")
         # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
         if not i:
             break
         m = Metodo()
         m.name = i
+
+        whileMethodsParameters(m)
+
         lista.append(m)
         # modelo.addmethod(m)
         # print("Method While loop has exited")
+
     modelo.metodos = lista
 
 
 def startAskForModel():
     modelo = Modelo()
-    modelo.name = input("Nome do Modelo")
+
+    while True:
+        modelo.name = input("Nome do Modelo").replace(" ", "").replace("\t", "")
+        if isNotEmpty(modelo.name):
+            break
 
     whileProperties(modelo)
 
