@@ -166,6 +166,7 @@ def commonjsExporter(modelo):
     for m in modelo.metodos:
         createMetodhsCommonJS(m)
     print("}")
+    print("module.exports = " + modelo.name + ";")
 
 
 def jssimplestExporter(modelo):
