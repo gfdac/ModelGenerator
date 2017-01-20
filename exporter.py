@@ -1,3 +1,6 @@
+ #!/usr/bin/python3
+ # -*- coding: utf-8 -*-
+
 tipos = ["[0]Integer", "[1]String", "[2]Float", "[3]Array[]", "[4]Objeto{}", "[5]Others..."]
 exporters = ["[0]Javascript CommonJS", "[1]Javascript Simples", "[2]Java", "[3]Todos"]
 
@@ -12,7 +15,7 @@ class Modelo:
     metodos = []
 
     def __init__(self):
-        print("Model Class Inited")
+        # print("Model Class Inited")
         self.propriedades.clear()
         self.metodos.clear()
 
@@ -45,10 +48,10 @@ def gerarExport(modelo):
     while True:  # This constructs an infinite loop
         # full exporter text options for user knowlegment
         e = ""
-        print("Escolha uma linguagem:")
+
         for member in exporters:
             e = e + " - " + member
-        print(e)
+        print("Escolha uma linguagem: " + e)
         num = input("")
 
         try:
@@ -84,10 +87,9 @@ def addProperty(modelo, p):
     num = None
     while True:  # This constructs an infinite loop
         t = ""
-        print("Escolha um tipo:")
         for member in tipos:
             t = t + " - " + member
-        print(t)
+        print("Escolha um tipo: " + t)
         num = input("")
 
         try:
@@ -102,7 +104,7 @@ def addProperty(modelo, p):
     # obtem o item da lista de acordo com o indice inputado
     tipo = tipos.__getitem__(numerico)
 
-    valor = input("Entre valor inicial para o campo " + p + ":")
+    valor = input("Entre valor inicial para o campo " + p + ": ")
 
     property = Propriedade()
     property.name = p
@@ -158,6 +160,7 @@ def createMetodhsCommonJS(m):
 
 
 def commonjsExporter(modelo):
+    print('*'*50)
     print("function " + modelo.name + "() {")
     for p in modelo.propriedades:
         createPropertyCommonJS(p)
@@ -167,9 +170,10 @@ def commonjsExporter(modelo):
         createMetodhsCommonJS(m)
     print("}")
     print("module.exports = " + modelo.name + ";")
-
+    print('*'*50)
 
 def jssimplestExporter(modelo):
+    print('*'*50)
     print("function " + modelo.name + "() {")
     for p in modelo.propriedades:
         createPropertyCommonJS(p)
@@ -178,7 +182,7 @@ def jssimplestExporter(modelo):
     for m in modelo.metodos:
         createMetodhsCommonJS(m)
     print("}")
-
+    print('*'*50)
 
 def javaExporter(modelo):
     print("Java exporter Under development")
@@ -235,14 +239,12 @@ def whileMethods(modelo):
 
 def startAskForModel():
     modelo = Modelo()
-
+    print('*'*50)
     while True:
-        modelo.name = input("Nome do Modelo").replace(" ", "").replace("\t", "")
+        modelo.name = input("Entre o Nome da Classe 'Model': ").replace(" ", "").replace("\t", "")
         if isNotEmpty(modelo.name):
             break
 
     whileProperties(modelo)
-
     whileMethods(modelo)
-
     gerarExport(modelo)

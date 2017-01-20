@@ -1,3 +1,6 @@
+ #!/usr/bin/python
+ # -*- coding: utf-8 -*-
+
 # Convert file existing_db.db to SQL dump file dump.sql
 import sqlite3
 
