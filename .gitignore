@@ -16,3 +16,7 @@ docs/includes
 spec/fixtures/evil-files/
 out/
 /electron/
+
+__pycache__/
+exporter.pyc
+

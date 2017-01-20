@@ -233,7 +233,7 @@ def whileMethodsParameters(metodo):
 def whileMethods(modelo):
     lista = []
     while True:
-        i = input("Entre o nome do Metodo (ou Enter para sair): ").replace(" ", "").replace("\t", "")
+        i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ", "").replace("\t", "")
         # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
         if not i:
             break

@@ -21,13 +21,16 @@ def addProperties(modelo):
     c.execute("PRAGMA table_info(" + modelo.name + ");")
     lista = []
     for row in c:
+
         p = ex.Propriedade()
         p.name = row[1]
         p.tipo = row[2]
         lista.append(p)
-        modelo.propriedades = lista
-        # modelo.addproperty(p)
-        # print(row[1] + " - " + row[2])
+        print("Propriedade " + p.name + " foi criada.")
+
+    modelo.propriedades = lista
+    # modelo.addproperty(p)
+    # print(row[1] + " - " + row[2])
 
 
 con = sqlite3.connect(file)
@@ -40,6 +43,9 @@ cc.execute("SELECT name FROM sqlite_master WHERE type='table';")
 for tabela in cc:
     modelo = ex.Modelo()
     modelo.name = tabela
+
+
+    print("Class 'Model' chamada " + modelo.name + " foi criada.");
 
     addProperties(modelo)
 
