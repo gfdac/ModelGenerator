@@ -20,3 +20,5 @@ out/
 __pycache__/
 exporter.pyc
 
+
+exporter/

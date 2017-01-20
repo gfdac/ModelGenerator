@@ -1,5 +1,6 @@
  #!/usr/bin/python3
  # -*- coding: utf-8 -*-
+import os
 
 tipos = ["Integer", "String", "Float", "Array[]", "Objeto{}", "Others..."]
 exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "Todos"]
@@ -138,26 +139,30 @@ def isNotEmpty(s):
 
 
 def createPropertyCommonJS(p):
+    r = ""
     if p.tipo == "1" and p.valor is not None:
-        print("     var " + p.name + " = '" + p.valor + "';")
+        r = r + "     var " + p.name + " = '" + p.valor + "';"
     elif p.tipo == "1" and p.valor is None:
-        print("     var " + p.name + " = '';")
+        r = r + "     var " + p.name + " = '';"
     else:
-        print("     var " + p.name + " = null;")
+        r = r + "     var " + p.name + " = null;"
+    return r
 
 
 def createDefinePropertyCommonJS(p):
-    print("     Object.defineProperty(this, '" + p.name + "', {")
-    print("         get: function() {")
-    print("             return " + p.name + ";");
-    print("     },")
-    print("     set: function(valor)")
-    print("     {")
-    print("     " + p.name + " = valor;")
-    print("     },")
-    print("         configurable: false,")
-    print("         enumerable: true")
-    print("     });")
+    r = ""
+    r = r + "     Object.defineProperty(this, '" + p.name + "', {" + "\n"
+    r = r + "         get: function() {" + "\n"
+    r = r + "             return " + p.name + ";" + "\n"
+    r = r + "     }," + "\n"
+    r = r + "     set: function(valor)" + "\n"
+    r = r + "     {" + "\n"
+    r = r + "     " + p.name + " = valor;" + "\n"
+    r = r + "     }," + "\n"
+    r = r + "         configurable: false," + "\n"
+    r = r + "         enumerable: true" + "\n"
+    r = r + "     });" + "\n"
+    return r
 
 
 def createMetodhsCommonJS(m):
@@ -168,33 +173,43 @@ def createMetodhsCommonJS(m):
     for param in m.parametros:
         parametros = parametros + param.name + ", "
 
-    print("     function " + m.name + "(" + parametros.rstrip(', ') + "){};")
+    return "     function " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
 
 
 def commonjsExporter(modelo):
     print('*'*50)
-    print("function " + modelo.name + "() {")
+    #r = result
+    r = ""
+    r = r + "function " + modelo.name + "() {" + "\n"
     for p in modelo.propriedades:
-        createPropertyCommonJS(p)
+        r = r + createPropertyCommonJS(p)  + "\n"
     for p in modelo.propriedades:
-        createDefinePropertyCommonJS(p)
+        r = r + createDefinePropertyCommonJS(p) + "\n"
     for m in modelo.metodos:
-        createMetodhsCommonJS(m)
-    print("}")
-    print("module.exports = " + modelo.name + ";")
+        r = r + createMetodhsCommonJS(m) + "\n"
+    r = r + "}\n"
+    r = r + "module.exports = " + modelo.name + ";" + "\n"
+
+    print(r)
     print('*'*50)
+    write_file(modelo.name + "_commonjs.js", r)
 
 def jssimplestExporter(modelo):
     print('*'*50)
-    print("function " + modelo.name + "() {")
+
+    r = ""
+    r = r + "function " + modelo.name + "() {" + "\n"
     for p in modelo.propriedades:
-        createPropertyCommonJS(p)
+        r = r + createPropertyCommonJS(p) + "\n"
     # for p in modelo.propriedades:
     #     createDefinePropertyjsSimplest(p)
     for m in modelo.metodos:
-        createMetodhsCommonJS(m)
-    print("}")
+        r = r + createMetodhsCommonJS(m) + "\n"
+    r = r + "}" + "\n"
+
+    print(r)
     print('*'*50)
+    write_file(modelo.name + "_simplest.js", r)
 
 def javaExporter(modelo):
     print("Java exporter Under development")
@@ -260,3 +275,21 @@ def startAskForModel():
     whileProperties(modelo)
     whileMethods(modelo)
     gerarExport(modelo)
+
+def createDirectory(dir):
+    if not os.path.exists(dir):
+        os.mkdir(dir)
+
+def write_file(file, data):
+    """
+    this function write data to file
+    :param data:
+    :return:
+    """
+    #file_name = r'D:\log.txt'
+    file_name = "./exporter/" + file
+
+    createDirectory("./exporter")
+
+    with open(file_name, 'wb') as x_file:
+        x_file.write(bytes(data, encoding="UTF-8"))
