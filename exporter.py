@@ -1,9 +1,18 @@
  #!/usr/bin/python3
  # -*- coding: utf-8 -*-
 
-tipos = ["[0]Integer", "[1]String", "[2]Float", "[3]Array[]", "[4]Objeto{}", "[5]Others..."]
-exporters = ["[0]Javascript CommonJS", "[1]Javascript Simples", "[2]Java", "[3]Todos"]
+tipos = ["Integer", "String", "Float", "Array[]", "Objeto{}", "Others..."]
+exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "Todos"]
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 def isInt(val):
     return val == int(val)
@@ -48,9 +57,10 @@ def gerarExport(modelo):
     while True:  # This constructs an infinite loop
         # full exporter text options for user knowlegment
         e = ""
-
+        count = 0
         for member in exporters:
-            e = e + " - " + member
+            e = e + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
+            count = count + 1
         print("Escolha uma linguagem: " + e)
         num = input("")
 
@@ -87,8 +97,10 @@ def addProperty(modelo, p):
     num = None
     while True:  # This constructs an infinite loop
         t = ""
+        count = 0
         for member in tipos:
-            t = t + " - " + member
+            t = t + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
+            count = count + 1
         print("Escolha um tipo: " + t)
         num = input("")
 
