@@ -135,8 +135,6 @@ def addProperty(modelo, p):
 
 def addMethod(modelo, m):
     modelo.addmethod(m)
-    # modelo.metodos.append(m)
-    # TODO: //ADD LOOP for add Parameter for this method
 
 
 def isNotEmpty(s):
@@ -185,10 +183,15 @@ def createDefinePropertyCommonJS(p):
 def createMetodhsTypeScript(m):
     parametros = ""
 
-    # TODO: get param type for Typescript export method correctly
     for param in m.parametros:
-        # parametros = parametros + param.name + ": " + param.tipo + " = " + param.valor + ", "
-        parametros = parametros + param.name + ": " + "Any" + " = " + "null" + ", "
+        if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "":
+            parametros = parametros + param.name + ": " + tipos.__getitem__(
+                int(param.tipo)).lower() + " = " + param.valor + ", "
+        elif param.tipo is not None and param.tipo is not "":
+            parametros = parametros + param.name + ": " + tipos.__getitem__(
+                int(param.tipo)).lower() + " = " + "null" + ", "
+        else:
+            parametros = parametros + param.name + ": " + "Any" + " = " + "null" + ", "
 
     return "     " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
 
@@ -282,10 +285,36 @@ def whileMethodsParameters(metodo):
             break
         p = Parametro()
         p.name = i
-        # TODO: get from user input!
-        p.tipo = ""
-        p.valor = ""
 
+        # ok
+
+        num = None
+        while True:  # This constructs an infinite loop
+            t = ""
+            count = 0
+            for member in tipos:
+                t = t + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
+                count = count + 1
+            print("Escolha um tipo para o parâmetro " + p.name + ": " + t)
+            num = input("")
+
+            try:
+                if isInt(int(num)) and int(num) < len(tipos):
+                    break
+                else:
+                    print("Escolha um número válido! Tente novamente...")
+            except ValueError:
+                print("Oops!  Este não é um número válido! Tente novamente...")
+
+        numerico = int(num)
+        # obtem o item da lista de acordo com o indice inputado
+        tipo = tipos.__getitem__(numerico)
+        p.tipo = str(numerico)
+
+        valor = input("Entre valor inicial para o parametro " + p.name + ": ")
+        p.valor = valor
+
+        # ok
         lista.append(p)
 
     metodo.parametros = lista
