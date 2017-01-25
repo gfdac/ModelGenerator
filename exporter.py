@@ -1,9 +1,10 @@
- #!/usr/bin/python3
- # -*- coding: utf-8 -*-
+# !/usr/bin/python3
+# -*- coding: utf-8 -*-
 import os
 
-tipos = ["Integer", "String", "Float", "Array[]", "Objeto{}", "Others..."]
-exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "Todos"]
+tipos = ["Integer", "String", "Number", "Float", "Array[]", "Objeto{}", "Others..."]
+exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Todos"]
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -14,6 +15,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
 
 def isInt(val):
     return val == int(val)
@@ -85,8 +87,11 @@ def gerarExport(modelo):
     # Java exporter
     elif exportar == 2:
         javaExporter(modelo)
-    # Todos
+    # TypeScript exporter
     elif exportar == 3:
+        typeScriptExporter(modelo)
+    # Todos
+    elif exportar == 4:
         commonjsExporter(modelo)
         jssimplestExporter(modelo)
         javaExporter(modelo)
@@ -138,12 +143,24 @@ def isNotEmpty(s):
     return bool(s and s.strip())
 
 
-def createPropertyCommonJS(p):
+def createPropertyTypeScript(p):
     r = ""
-    if p.tipo == "1" and p.valor is not None:
+    if p.tipo is not None and p.valor is not None and p.valor is not "":
+        r = r + "     " + p.name + ": " + tipos.__getitem__(int(p.tipo)).lower() + " = '" + p.valor + "';"
+    elif p.tipo is not None:
+        r = r + "     " + p.name + ": " + tipos.__getitem__(int(p.tipo)).lower() + " = null;"
+    else:
+        r = r + "     " + p.name + " : Any = null;"
+    return r
+
+
+def createPropertyCommonJS(p):
+    # TODO: tratar ''' aspas quando for necessario.. criar lista de quem recebe?
+    r = ""
+    if p.tipo is not None and p.valor is not None and p.valor is not "":
         r = r + "     var " + p.name + " = '" + p.valor + "';"
-    elif p.tipo == "1" and p.valor is None:
-        r = r + "     var " + p.name + " = '';"
+    # elif p.tipo is not None:
+    #     r = r + "     var " + p.name + " = '';"
     else:
         r = r + "     var " + p.name + " = null;"
     return r
@@ -165,9 +182,18 @@ def createDefinePropertyCommonJS(p):
     return r
 
 
-def createMetodhsCommonJS(m):
-    # TODO: obter a lista de parametros e montar com ela
+def createMetodhsTypeScript(m):
+    parametros = ""
 
+    # TODO: get param type for Typescript export method correctly
+    for param in m.parametros:
+        # parametros = parametros + param.name + ": " + param.tipo + " = " + param.valor + ", "
+        parametros = parametros + param.name + ": " + "Any" + " = " + "null" + ", "
+
+    return "     " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
+
+
+def createMetodhsCommonJS(m):
     parametros = ""
 
     for param in m.parametros:
@@ -177,12 +203,12 @@ def createMetodhsCommonJS(m):
 
 
 def commonjsExporter(modelo):
-    print('*'*50)
-    #r = result
+    print('*' * 50)
+    # r = result
     r = ""
     r = r + "function " + modelo.name + "() {" + "\n"
     for p in modelo.propriedades:
-        r = r + createPropertyCommonJS(p)  + "\n"
+        r = r + createPropertyCommonJS(p) + "\n"
     for p in modelo.propriedades:
         r = r + createDefinePropertyCommonJS(p) + "\n"
     for m in modelo.metodos:
@@ -191,11 +217,12 @@ def commonjsExporter(modelo):
     r = r + "module.exports = " + modelo.name + ";" + "\n"
 
     print(r)
-    print('*'*50)
+    print('*' * 50)
     write_file(modelo.name + "_commonjs.js", r)
 
+
 def jssimplestExporter(modelo):
-    print('*'*50)
+    print('*' * 50)
 
     r = ""
     r = r + "function " + modelo.name + "() {" + "\n"
@@ -208,8 +235,27 @@ def jssimplestExporter(modelo):
     r = r + "}" + "\n"
 
     print(r)
-    print('*'*50)
+    print('*' * 50)
     write_file(modelo.name + "_simplest.js", r)
+
+
+def typeScriptExporter(modelo):
+    print('*' * 50)
+    # r = result
+    r = ""
+    r = r + "class " + modelo.name + "{" + "\n"
+    for p in modelo.propriedades:
+        r = r + createPropertyTypeScript(p) + "\n"
+    # for p in modelo.propriedades:
+    #     r = r + createDefinePropertyCommonJS(p) + "\n"
+    for m in modelo.metodos:
+        r = r + createMetodhsTypeScript(m) + "\n"
+    r = r + "}\n"
+
+    print(r)
+    print('*' * 50)
+    write_file(modelo.name + "_typeScript.ts", r)
+
 
 def javaExporter(modelo):
     print("Java exporter Under development")
@@ -248,7 +294,9 @@ def whileMethodsParameters(metodo):
 def whileMethods(modelo):
     lista = []
     while True:
-        i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ", "").replace("\t", "")
+        i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ",
+                                                                                                             "").replace(
+            "\t", "")
         # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
         if not i:
             break
@@ -266,7 +314,7 @@ def whileMethods(modelo):
 
 def startAskForModel():
     modelo = Modelo()
-    print('*'*50)
+    print('*' * 50)
     while True:
         modelo.name = input("Entre o Nome da Classe 'Model': ").replace(" ", "").replace("\t", "")
         if isNotEmpty(modelo.name):
@@ -276,9 +324,11 @@ def startAskForModel():
     whileMethods(modelo)
     gerarExport(modelo)
 
+
 def createDirectory(dir):
     if not os.path.exists(dir):
         os.mkdir(dir)
+
 
 def write_file(file, data):
     """
@@ -286,7 +336,7 @@ def write_file(file, data):
     :param data:
     :return:
     """
-    #file_name = r'D:\log.txt'
+    # file_name = r'D:\log.txt'
     file_name = "./exporter/" + file
 
     createDirectory("./exporter")
