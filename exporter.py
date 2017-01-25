@@ -5,6 +5,21 @@ import os
 tipos = ["Integer", "String", "Number", "Float", "Array[]", "Objeto{}", "Others..."]
 exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Todos"]
 
+# CONSTANTS for exportes and Tipos
+K_TIPO_INTEGER = 0
+K_TIPO_STRING = 1
+K_TIPO_NUMBER = 2
+K_TIPO_FLOAT = 3
+K_TIPO_ARRAY = 4
+K_TIPO_OBJETO = 5
+K_TIPO_OTHERS = 6
+
+K_EXPORTER_COMMONJS = 0
+K_EXPORTER_JAVASCRIPT_SIMPLES = 1
+K_EXPORTER_JAVA = 2
+K_EXPORTER_TYPESCRIPT = 3
+K_EXPORTER_TODOS = 4
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -41,6 +56,7 @@ class Modelo:
 class Propriedade:
     name = ""
     tipo = ""
+    valor = None
 
 
 class Metodo:
@@ -51,7 +67,6 @@ class Metodo:
 class Parametro:
     name = ""
     tipo = ""
-    valor = None
     valor = None
 
 
@@ -126,7 +141,8 @@ def addProperty(modelo, p):
 
     property = Propriedade()
     property.name = p
-    property.tipo = str(numerico)
+    # property.tipo = str(numerico)
+    property.tipo = tipo
     property.valor = valor
 
     # modelo.propriedades.append(property)
@@ -144,9 +160,9 @@ def isNotEmpty(s):
 def createPropertyTypeScript(p):
     r = ""
     if p.tipo is not None and p.valor is not None and p.valor is not "":
-        r = r + "     " + p.name + ": " + tipos.__getitem__(int(p.tipo)).lower() + " = '" + p.valor + "';"
+        r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = '" + p.valor + "';"
     elif p.tipo is not None:
-        r = r + "     " + p.name + ": " + tipos.__getitem__(int(p.tipo)).lower() + " = null;"
+        r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = null;"
     else:
         r = r + "     " + p.name + " : Any = null;"
     return r
@@ -185,11 +201,12 @@ def createMetodhsTypeScript(m):
 
     for param in m.parametros:
         if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "":
-            parametros = parametros + param.name + ": " + tipos.__getitem__(
-                int(param.tipo)).lower() + " = " + param.valor + ", "
+            parametros = parametros + param.name + ": " + converteTipos(param.tipo,
+                                                                        K_EXPORTER_TYPESCRIPT) + " = " + str(
+                param.valor) + ", "
         elif param.tipo is not None and param.tipo is not "":
-            parametros = parametros + param.name + ": " + tipos.__getitem__(
-                int(param.tipo)).lower() + " = " + "null" + ", "
+            parametros = parametros + param.name + ": " + converteTipos(param.tipo,
+                                                                        K_EXPORTER_TYPESCRIPT) + " = " + "null" + ", "
         else:
             parametros = parametros + param.name + ": " + "Any" + " = " + "null" + ", "
 
@@ -309,7 +326,8 @@ def whileMethodsParameters(metodo):
         numerico = int(num)
         # obtem o item da lista de acordo com o indice inputado
         tipo = tipos.__getitem__(numerico)
-        p.tipo = str(numerico)
+        # p.tipo = str(numerico)
+        p.tipo = tipo
 
         valor = input("Entre valor inicial para o parametro " + p.name + ": ")
         p.valor = valor
@@ -318,6 +336,32 @@ def whileMethodsParameters(metodo):
         lista.append(p)
 
     metodo.parametros = lista
+
+
+# recebe o tipo em texto e o exporter em indice do array
+def converteTipos(tipo, exporter):
+    # CommonJS
+    if exporter == K_EXPORTER_COMMONJS:
+        return ""
+    # JS Simplest
+    elif exporter == K_EXPORTER_JAVASCRIPT_SIMPLES:
+        return ""
+    # Java
+    elif exporter == K_EXPORTER_JAVA:
+        return ""
+    # TypeScript
+    elif exporter == K_EXPORTER_TYPESCRIPT:
+        if tipo.lower() == "INTEGER".lower() or tipo.lower() == "FLOAT".lower() or tipo.lower() == "DECIMAL".lower() or tipo.lower() == "NUMBER".lower():
+            return "number"
+        if tipo.lower() == "TEXT".lower() or tipo.lower() == "VARCHAR".lower():
+            return "string"
+        else:
+            return "Any"
+    # Todos
+    elif exporter == K_EXPORTER_TODOS:
+        return ""
+    else:
+        return ""
 
 
 def whileMethods(modelo):
