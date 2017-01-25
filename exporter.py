@@ -163,8 +163,12 @@ def isNotEmpty(s):
 
 def createPropertyTypeScript(p):
     r = ""
-    if p.tipo is not None and p.valor is not None and p.valor is not "":
+    if p.tipo is not None and p.valor is not None and p.valor is not "" and (
+                        p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = '" + p.valor + "';"
+    elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+                            p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
+        r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = " + p.valor + ";"
     elif p.tipo is not None:
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = null;"
     else:
@@ -204,10 +208,20 @@ def createMetodhsTypeScript(m):
     parametros = ""
 
     for param in m.parametros:
-        if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "":
+
+        if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
+                            param.tipo.lower() == K_TIPO_STRING.lower() or param.tipo.lower() == K_TIPO_TEXT.lower() or param.tipo.lower() == K_TIPO_VARCHAR.lower()):
+            parametros = parametros + param.name + ": " + converteTipos(param.tipo,
+                                                                        K_EXPORTER_TYPESCRIPT) + " = '" + str(
+                param.valor) + "', "
+
+        elif param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
+                                param.tipo.lower() == K_TIPO_DECIMAL.lower() or param.tipo.lower() == K_TIPO_INTEGER.lower() or param.tipo.lower() == K_TIPO_NUMBER.lower() or param.tipo.lower() == K_TIPO_FLOAT.lower()):
             parametros = parametros + param.name + ": " + converteTipos(param.tipo,
                                                                         K_EXPORTER_TYPESCRIPT) + " = " + str(
                 param.valor) + ", "
+
+
         elif param.tipo is not None and param.tipo is not "":
             parametros = parametros + param.name + ": " + converteTipos(param.tipo,
                                                                         K_EXPORTER_TYPESCRIPT) + " = " + "null" + ", "
