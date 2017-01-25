@@ -163,11 +163,17 @@ def isNotEmpty(s):
 
 def createPropertyTypeScript(p):
     r = ""
+    # Strings
     if p.tipo is not None and p.valor is not None and p.valor is not "" and (
                         p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = '" + p.valor + "';"
+    #Numbers
     elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
                             p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
+        r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = " + p.valor + ";"
+    # Boolean
+    elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+                p.tipo.lower() == K_TIPO_BOOLEAN.lower()):
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = " + p.valor + ";"
     elif p.tipo is not None:
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = null;"
@@ -371,8 +377,10 @@ def converteTipos(tipo, exporter):
     elif exporter == K_EXPORTER_TYPESCRIPT:
         if tipo.lower() == K_TIPO_INTEGER.lower() or tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
             return "number"
-        if tipo.lower() == K_TIPO_STRING.lower() or tipo.lower() == K_TIPO_VARCHAR.lower() or tipo.lower() == K_TIPO_TEXT.lower():
+        elif tipo.lower() == K_TIPO_STRING.lower() or tipo.lower() == K_TIPO_VARCHAR.lower() or tipo.lower() == K_TIPO_TEXT.lower():
             return "string"
+        elif tipo.lower() == K_TIPO_BOOLEAN.lower():
+            return "boolean"
         else:
             return "Any"
     # Todos
