@@ -2,17 +2,21 @@
 # -*- coding: utf-8 -*-
 import os
 
-tipos = ["Integer", "String", "Number", "Float", "Array[]", "Objeto{}", "Others..."]
+tipos = ["String", "Boolean", "Integer", "Number", "Float", "Array", "Object", "Others..."]
 exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Todos"]
 
 # CONSTANTS for exportes and Tipos
-K_TIPO_INTEGER = 0
-K_TIPO_STRING = 1
-K_TIPO_NUMBER = 2
-K_TIPO_FLOAT = 3
-K_TIPO_ARRAY = 4
-K_TIPO_OBJETO = 5
-K_TIPO_OTHERS = 6
+K_TIPO_STRING = 'String'
+K_TIPO_VARCHAR = 'Varchar'
+K_TIPO_TEXT = 'Text'
+K_TIPO_BOOLEAN = 'Boolean'
+K_TIPO_INTEGER = "Integer"
+K_TIPO_DECIMAL = "Decimal"
+K_TIPO_NUMBER = "Number"
+K_TIPO_FLOAT = "Float"
+K_TIPO_ARRAY = "Array"
+K_TIPO_OBJETO = "Object"
+K_TIPO_OTHERS = "Others..."
 
 K_EXPORTER_COMMONJS = 0
 K_EXPORTER_JAVASCRIPT_SIMPLES = 1
@@ -351,9 +355,9 @@ def converteTipos(tipo, exporter):
         return ""
     # TypeScript
     elif exporter == K_EXPORTER_TYPESCRIPT:
-        if tipo.lower() == "INTEGER".lower() or tipo.lower() == "FLOAT".lower() or tipo.lower() == "DECIMAL".lower() or tipo.lower() == "NUMBER".lower():
+        if tipo.lower() == K_TIPO_INTEGER.lower() or tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
             return "number"
-        if tipo.lower() == "TEXT".lower() or tipo.lower() == "VARCHAR".lower():
+        if tipo.lower() == K_TIPO_STRING.lower() or tipo.lower() == K_TIPO_VARCHAR.lower() or tipo.lower() == K_TIPO_TEXT.lower():
             return "string"
         else:
             return "Any"
