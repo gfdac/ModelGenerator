@@ -3,7 +3,7 @@
 import os
 
 tipos = ["String", "Boolean", "Integer", "Number", "Float", "Array", "Object", "Others..."]
-exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Todos"]
+exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Swift", "Todos"]
 
 # CONSTANTS for exportes and Tipos
 K_TIPO_STRING = 'String'
@@ -22,7 +22,8 @@ K_EXPORTER_COMMONJS = 0
 K_EXPORTER_JAVASCRIPT_SIMPLES = 1
 K_EXPORTER_JAVA = 2
 K_EXPORTER_TYPESCRIPT = 3
-K_EXPORTER_TODOS = 4
+K_EXPORTER_SWIFT = 4
+K_EXPORTER_TODOS = 5
 
 
 class bcolors:
@@ -98,19 +99,22 @@ def gerarExport(modelo):
     exportar = int(num)
 
     # Javascript CommonJS Exporter
-    if exportar == 0:
+    if exportar == K_EXPORTER_COMMONJS:
         commonjsExporter(modelo)
     # Javascript Simplest Way
-    elif exportar == 1:
+    elif exportar == K_EXPORTER_JAVASCRIPT_SIMPLES:
         jssimplestExporter(modelo)
     # Java exporter
-    elif exportar == 2:
+    elif exportar == K_EXPORTER_JAVA:
         javaExporter(modelo)
     # TypeScript exporter
-    elif exportar == 3:
+    elif exportar == K_EXPORTER_TYPESCRIPT:
         typeScriptExporter(modelo)
+    # swift exporter
+    elif exportar == K_EXPORTER_SWIFT:
+        swiftExporter(modelo)
     # Todos
-    elif exportar == 4:
+    elif exportar == K_EXPORTER_TODOS:
         commonjsExporter(modelo)
         jssimplestExporter(modelo)
         javaExporter(modelo)
@@ -167,7 +171,7 @@ def createPropertyTypeScript(p):
     if p.tipo is not None and p.valor is not None and p.valor is not "" and (
                         p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = '" + p.valor + "';"
-    #Numbers
+    # Numbers
     elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
                             p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = " + p.valor + ";"
@@ -178,7 +182,28 @@ def createPropertyTypeScript(p):
     elif p.tipo is not None:
         r = r + "     " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_TYPESCRIPT) + " = null;"
     else:
-        r = r + "     " + p.name + " : Any = null;"
+        r = r + "     " + p.name + " : any = null;"
+    return r
+
+
+def createPropertySwift(p):
+    r = ""
+    # Strings
+    if p.tipo is not None and p.valor is not None and p.valor is not "" and (
+                        p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
+        r = r + "     var " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_SWIFT) + " = '" + p.valor + "';"
+    # Numbers
+    elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+                            p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
+        r = r + "     var " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_SWIFT) + " = " + p.valor + ";"
+    # Boolean
+    elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+                p.tipo.lower() == K_TIPO_BOOLEAN.lower()):
+        r = r + "     var " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_SWIFT) + " = " + p.valor + ";"
+    elif p.tipo is not None:
+        r = r + "     var " + p.name + ": " + converteTipos(p.tipo, K_EXPORTER_SWIFT) + " = nil;"
+    else:
+        r = r + "     var " + p.name + " = nil;"
     return r
 
 
@@ -210,31 +235,56 @@ def createDefinePropertyCommonJS(p):
     return r
 
 
-def createMetodhsTypeScript(m):
-    parametros = ""
+def createMetodhTypeScript(m):
+    r = ""
 
     for param in m.parametros:
 
         if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
                             param.tipo.lower() == K_TIPO_STRING.lower() or param.tipo.lower() == K_TIPO_TEXT.lower() or param.tipo.lower() == K_TIPO_VARCHAR.lower()):
-            parametros = parametros + param.name + ": " + converteTipos(param.tipo,
-                                                                        K_EXPORTER_TYPESCRIPT) + " = '" + str(
+            r = r + param.name + ": " + converteTipos(param.tipo,
+                                                      K_EXPORTER_TYPESCRIPT) + " = '" + str(
                 param.valor) + "', "
 
         elif param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
                                 param.tipo.lower() == K_TIPO_DECIMAL.lower() or param.tipo.lower() == K_TIPO_INTEGER.lower() or param.tipo.lower() == K_TIPO_NUMBER.lower() or param.tipo.lower() == K_TIPO_FLOAT.lower()):
-            parametros = parametros + param.name + ": " + converteTipos(param.tipo,
-                                                                        K_EXPORTER_TYPESCRIPT) + " = " + str(
+            r = r + param.name + ": " + converteTipos(param.tipo,
+                                                      K_EXPORTER_TYPESCRIPT) + " = " + str(
                 param.valor) + ", "
 
 
         elif param.tipo is not None and param.tipo is not "":
-            parametros = parametros + param.name + ": " + converteTipos(param.tipo,
-                                                                        K_EXPORTER_TYPESCRIPT) + " = " + "null" + ", "
+            r = r + param.name + ": " + converteTipos(param.tipo,
+                                                      K_EXPORTER_TYPESCRIPT) + " = " + "null" + ", "
         else:
-            parametros = parametros + param.name + ": " + "Any" + " = " + "null" + ", "
+            r = r + param.name + ": " + "any" + " = " + "null" + ", "
 
-    return "     " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
+    return "     " + m.name + "(" + r.rstrip(', ') + "){};" + "\n"
+
+
+def createMetodhSwift(m):
+    r = ""
+
+    for param in m.parametros:
+
+        if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
+                            param.tipo.lower() == K_TIPO_STRING.lower() or param.tipo.lower() == K_TIPO_TEXT.lower() or param.tipo.lower() == K_TIPO_VARCHAR.lower()):
+            r = r + param.name + ": " + converteTipos(param.tipo,
+                                                      K_EXPORTER_SWIFT) + "', "
+
+        elif param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
+                                param.tipo.lower() == K_TIPO_DECIMAL.lower() or param.tipo.lower() == K_TIPO_INTEGER.lower() or param.tipo.lower() == K_TIPO_NUMBER.lower() or param.tipo.lower() == K_TIPO_FLOAT.lower()):
+            r = r + param.name + ": " + converteTipos(param.tipo,
+                                                      K_EXPORTER_SWIFT) + ", "
+
+
+        elif param.tipo is not None and param.tipo is not "":
+            r = r + param.name + ": " + converteTipos(param.tipo,
+                                                      K_EXPORTER_SWIFT) + ", "
+        else:
+            r = r + param.name + ": " + "T" + ", "
+
+    return "     func " + m.name + "(" + r.rstrip(', ') + "){};" + "\n"
 
 
 def createMetodhsCommonJS(m):
@@ -293,7 +343,23 @@ def typeScriptExporter(modelo):
     # for p in modelo.propriedades:
     #     r = r + createDefinePropertyCommonJS(p) + "\n"
     for m in modelo.metodos:
-        r = r + createMetodhsTypeScript(m) + "\n"
+        r = r + createMetodhTypeScript(m) + "\n"
+    r = r + "}\n"
+
+    print(r)
+    print('*' * 50)
+    write_file(modelo.name + "_typeScript.ts", r)
+
+
+def swiftExporter(modelo):
+    print('*' * 50)
+    # r = result
+    r = ""
+    r = r + "class " + modelo.name + "{" + "\n"
+    for p in modelo.propriedades:
+        r = r + createPropertySwift(p) + "\n"
+    for m in modelo.metodos:
+        r = r + createMetodhSwift(m) + "\n"
     r = r + "}\n"
 
     print(r)
@@ -382,7 +448,22 @@ def converteTipos(tipo, exporter):
         elif tipo.lower() == K_TIPO_BOOLEAN.lower():
             return "boolean"
         else:
-            return "Any"
+            return "any"
+            # TODO: create for other types like tuples, arrays, enum, void, null and Undefined
+
+    # Swift
+    elif exporter == K_EXPORTER_SWIFT:
+        if tipo.lower() == K_TIPO_INTEGER.lower():
+            return "Int"
+        if tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
+            return "Double"
+        elif tipo.lower() == K_TIPO_STRING.lower() or tipo.lower() == K_TIPO_VARCHAR.lower() or tipo.lower() == K_TIPO_TEXT.lower():
+            return "String"
+        elif tipo.lower() == K_TIPO_BOOLEAN.lower():
+            return "Boolean"
+        else:
+            return ""
+
     # Todos
     elif exporter == K_EXPORTER_TODOS:
         return ""
