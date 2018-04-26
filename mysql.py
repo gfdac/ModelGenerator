@@ -1,4 +1,3 @@
-# /*[[[cog
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -7,44 +6,6 @@ import exporter as ex
 modelos = []
 
 import pymysql.cursors
-import json, ast, sys, re
-
-
-def converte(type):
-    regex = re.compile('int')
-    inteiro = regex.findall(type)
-
-    regex = re.compile('double')
-    duplo = regex.findall(type)
-
-    regex = re.compile('float')
-    floater = regex.findall(type)
-
-    regex = re.compile('decimal')
-    decimal = regex.findall(type)
-
-    regex = re.compile('varchar')
-    string = regex.findall(type)
-
-    regex = re.compile('text')
-    texto = regex.findall(type)
-
-    if inteiro:
-        return "int"
-    if string:
-        # if type == "varchar(255)":
-        return "string"
-    if texto:
-        return "string"
-    if duplo:
-        return "double"
-    if floater:
-        return "float"
-    if decimal:
-        return "float"
-
-    return type
-
 
 # Connect to the database
 connection = pymysql.connect(host='localhost',
@@ -65,11 +26,6 @@ try:
             tabela = cursortabela.fetchone()
             if tabela == None:
                 break
-
-            # json.dump(row, sys.stdout)
-
-            # print(tabela['Tables_in_exchange'])
-
 
             for k, v in tabela.items():
                 modelo = ex.Modelo()
@@ -115,9 +71,3 @@ finally:
 for modelo in modelos:
     ex.whileMethods(modelo)
     ex.gerarExport(modelo)
-
-
-
-
-# ]]]*/
-# //[[[end]]]
