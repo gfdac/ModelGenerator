@@ -229,6 +229,19 @@ def createPropertyCommonJS(p):
     return r
 
 
+# protected $_conn;
+def createPropertyPHP(p):
+    # TODO: tratar ''' aspas quando for necessario.. criar lista de quem recebe?
+    r = ""
+    if p.tipo is not None and p.valor is not None and p.valor is not "":
+        r = r + "     public $_" + p.name + " = '" + p.valor + "';"
+    # elif p.tipo is not None:
+    #     r = r + "     var " + p.name + " = '';"
+    else:
+        r = r + "     public $_" + p.name + " = null;"
+    return r
+
+
 def createDefinePropertyCommonJS(p):
     r = ""
     r = r + "     Object.defineProperty(this, '" + p.name + "', {" + "\n"
@@ -306,6 +319,18 @@ def createMetodhsCommonJS(m):
     return "     function " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
 
 
+#    public function ExecuteObject($sql, $data) {
+#        // stuff
+#    }
+def createMetodhsPHP(m):
+    parametros = ""
+
+    for param in m.parametros:
+        parametros = parametros + "$_" + param.name + ", "
+
+    return "     public function " + m.name + "(" + parametros.rstrip(', ') + "){}" + "\n"
+
+
 def commonjsExporter(modelo):
     print('*' * 50)
     # r = result
@@ -377,8 +402,38 @@ def swiftExporter(modelo):
     write_file(modelo.name + "_typeScript.ts", r)
 
 
+# class Database {
+#    protected $_conn;
+#
+#    public function __construct($connection) {
+#        $this->_conn = $connection;
+#    }
+#
+#    public function ExecuteObject($sql, $data) {
+#        // stuff
+#    }
+# }
+
 def phpExporter(modelo):
-    print("PHP exporter Under development")
+    print('*' * 50)
+    # r = result
+    r = ""
+    r = r + "class " + modelo.name + " extends Model {" + "\n"
+
+    r = r + "   public function __construct() {" + "\n"
+    # $this->_conn = $connection;
+    r = r + "   }" + "\n"
+
+    for p in modelo.propriedades:
+        r = r + createPropertyPHP(p) + "\n"
+    for m in modelo.metodos:
+        r = r + createMetodhsPHP(m) + "\n"
+
+    r = r + "}\n"
+
+    print(r)
+    print('*' * 50)
+    write_file(modelo.name + "_php.php", r)
 
 
 def javaExporter(modelo):
@@ -489,7 +544,9 @@ def whileMethods(modelo):
     lista = []
     while True:
         try:
-            i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ","").replace("\t", "")
+            i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ",
+                                                                                                                 "").replace(
+                "\t", "")
             # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
             if not i:
                 break
