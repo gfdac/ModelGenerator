@@ -3,6 +3,8 @@
 
 import exporter as ex
 
+database = "exchange"
+
 modelos = []
 
 import pymysql.cursors
@@ -11,7 +13,7 @@ import pymysql.cursors
 connection = pymysql.connect(host='localhost',
                              user='root',
                              password='root',
-                             db='exchange',
+                             db=database,
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
@@ -19,7 +21,7 @@ try:
     with connection.cursor() as cursortabela:
 
         # Read a single record
-        sql = "SHOW TABLES FROM exchange"
+        sql = "SHOW TABLES FROM %s" % database
         cursortabela.execute(sql)
 
         while True:
