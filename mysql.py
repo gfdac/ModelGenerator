@@ -24,13 +24,13 @@ try:
 
         while True:
             tabela = cursortabela.fetchone()
-            if tabela == None:
+            if tabela is None:
                 break
 
             for k, v in tabela.items():
                 modelo = ex.Modelo()
                 modelo.name = v
-                print("Class 'Model' chamada " + modelo.name + " foi criada.");
+                print("Class 'Model' chamada " + modelo.name + " foi criada.")
                 modelos.append(modelo)
 
                 # Read a single record
@@ -44,7 +44,7 @@ try:
 
                         while True:
                             row = cursor.fetchone()
-                            if row == None:
+                            if row is None:
                                 break
 
                             p = ex.Propriedade()
@@ -61,9 +61,6 @@ try:
                 finally:
                     print("final")
                     # connection.close()
-
-
-
 
 finally:
     connection.close()
