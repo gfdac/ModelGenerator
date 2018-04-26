@@ -3,7 +3,7 @@
 import os
 
 tipos = ["String", "Boolean", "Integer", "Number", "Float", "Array", "Object", "Others..."]
-exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Swift", "Todos"]
+exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Swift", "PHP", "Todos"]
 
 # CONSTANTS for exportes and Tipos
 K_TIPO_STRING = 'String'
@@ -23,10 +23,14 @@ K_EXPORTER_JAVASCRIPT_SIMPLES = 1
 K_EXPORTER_JAVA = 2
 K_EXPORTER_TYPESCRIPT = 3
 K_EXPORTER_SWIFT = 4
-K_EXPORTER_TODOS = 5
+K_EXPORTER_PHP = 5
+K_EXPORTER_TODOS = 6
 
 
 class bcolors:
+    def __init__(self):
+        print("bcolors ini")
+
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
@@ -113,13 +117,20 @@ def gerarExport(modelo):
     # swift exporter
     elif exportar == K_EXPORTER_SWIFT:
         swiftExporter(modelo)
+    # php exporter
+    elif exportar == K_EXPORTER_PHP:
+        phpExporter(modelo)
+
     # Todos
     elif exportar == K_EXPORTER_TODOS:
         commonjsExporter(modelo)
         jssimplestExporter(modelo)
         javaExporter(modelo)
+        swiftExporter(modelo)
+        phpExporter(modelo)
     else:
-        print("Other typers soon")
+        print("Other languages types soon")
+        gerarExport(modelo)
 
 
 def addProperty(modelo, p):
@@ -367,6 +378,10 @@ def swiftExporter(modelo):
     write_file(modelo.name + "_typeScript.ts", r)
 
 
+def phpExporter(modelo):
+    print("PHP exporter Under development")
+
+
 def javaExporter(modelo):
     print("Java exporter Under development")
 
@@ -474,22 +489,21 @@ def converteTipos(tipo, exporter):
 def whileMethods(modelo):
     lista = []
     while True:
-        i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ",
-                                                                                                             "").replace(
-            "\t", "")
-        # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
-        if not i:
-            break
-        m = Metodo()
-        m.name = i
+        try:
+            i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ","").replace("\t", "")
+            # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
+            if not i:
+                break
+            m = Metodo()
+            m.name = i
 
-        whileMethodsParameters(m)
+            whileMethodsParameters(m)
 
-        lista.append(m)
-        # modelo.addmethod(m)
-        # print("Method While loop has exited")
-
-    modelo.metodos = lista
+            lista.append(m)
+            # modelo.addmethod(m)
+            # print("Method While loop has exited")
+        finally:
+            modelo.metodos = lista
 
 
 def startAskForModel():
@@ -513,6 +527,7 @@ def createDirectory(dir):
 def write_file(file, data):
     """
     this function write data to file
+    :param file:
     :param data:
     :return:
     """
