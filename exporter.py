@@ -414,6 +414,14 @@ def swiftExporter(modelo):
 #    }
 # }
 
+# abstract class Model {
+#    protected $_db;
+#
+#    public function __construct(Database $db) {
+#        $this->_db = $db;
+#    }
+# }
+
 def phpExporter(modelo):
     print('*' * 50)
     # r = result
