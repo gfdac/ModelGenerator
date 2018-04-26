@@ -29,7 +29,7 @@ K_EXPORTER_TODOS = 6
 
 class bcolors:
     def __init__(self):
-        print("bcolors ini")
+        print("")
 
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -80,7 +80,6 @@ class Parametro:
 
 
 def gerarExport(modelo):
-    num = None
     while True:  # This constructs an infinite loop
         # full exporter text options for user knowlegment
         e = ""
