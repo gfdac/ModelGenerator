@@ -252,9 +252,9 @@ def createPropertyLaravel(modelo):
     r = ""
 
     for p in modelo.propriedades:
-        r = r + "'"  + p.name + "'" + ","
+        r = r + "'"  + p.name + "'" + ", "
 
-    r = r.rstrip(',')
+    r = r.rstrip(', ')
 
     r = "   protected $fillable = [" + r + "];"
 
