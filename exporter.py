@@ -453,7 +453,7 @@ def swiftExporter(modelo):
 def phpExporter(modelo):
     print('*' * 50)
     # r = result
-    r = "<?php"
+    r = "<?php" + "\n"
     r = r + "class " + modelo.name + " extends Model {" + "\n"
 
     r = r + "   public function __construct() {" + "\n"
