@@ -40,11 +40,13 @@ def foreignkey(tabela):
                 if chaves is None:
                     break
 
-                for k, v in chaves.items():
-                    print('Foreign KEY: ' + k + ' - ' + v)
+                # for k, v in chaves.items():
+                #     print('Foreign KEY: ' + k + ' - ' + v)
+
     finally:
+        1 + 1
         # connection.close()
-        print("")
+        # print("")
 
 
 try:
@@ -61,11 +63,11 @@ try:
 
             for k, v in tabela.items():
 
-                # foreignkey(v)
+                foreignkey(v)
 
                 modelo = ex.Modelo()
                 modelo.name = v
-                print("Class 'Model' chamada " + modelo.name + " foi criada.")
+                # print("Class 'Model' chamada " + modelo.name + " foi criada.")
                 modelos.append(modelo)
 
                 # Read a single record
@@ -89,12 +91,13 @@ try:
                             p.valor = row['Default']
 
                             lista.append(p)
-                            print("Propriedade " + p.name + " foi criada.")
+                            # print("Propriedade " + p.name + " foi criada.")
 
                         modelo.propriedades = lista
 
                 finally:
-                    print("")
+                    1 + 1
+                    # print("")
                     # connection.close()
 
 finally:

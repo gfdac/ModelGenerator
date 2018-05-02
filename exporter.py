@@ -89,9 +89,10 @@ def gerarExport(modelo):
             e = e + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
             count = count + 1
         print("Escolha uma linguagem: " + e)
-        num = input("")
 
         try:
+            num = input("")
+
             if isInt(int(num)) and int(num) < len(exporters):
                 break
             else:
