@@ -1,4 +1,4 @@
-# !/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Convert file existing_db.db to SQL dump file dump.sql
@@ -28,7 +28,8 @@ def addProperties(modelo):
         p.valor = str(0)
 
         lista.append(p)
-        print("Propriedade " + p.name + " foi criada.")
+        # print("Propriedade " + p.name + " foi criada.")
+        ex.sucesso("Propriedade " + p.name + " foi criada.")
 
     modelo.propriedades = lista
     # modelo.addproperty(p)

@@ -1,11 +1,30 @@
-# !/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
 
-tipos = ["String", "Boolean", "Integer", "Number", "Float", "Array", "Object", "Others..."]
-exporters = ["Javascript CommonJS", "Javascript Simples", "Java", "TypeScript", "Swift", "PHP", 'Laravel', "Todos"]
+tipos = ["String",
+         "Boolean",
+         "Integer",
+         "Number",
+         "Float",
+         "Array",
+         "Object",
+         "Other ->"]
 
-# CONSTANTS for exportes and Tipos
+exporters = ["Javascript Simples",
+             "Javascript CommonJS",
+             "TypeScript",
+             "Java",
+             "PHP",
+             'Laravel',
+             "C",
+             "C++",
+             "Python",
+             "Swift",
+             "Objective-C",
+             "Todos"]
+
+# CONSTANTS for Exporters and Tipos
 K_TIPO_STRING = 'String'
 K_TIPO_VARCHAR = 'Varchar'
 K_TIPO_TEXT = 'Text'
@@ -18,21 +37,27 @@ K_TIPO_ARRAY = "Array"
 K_TIPO_OBJETO = "Object"
 K_TIPO_OTHERS = "Others..."
 
-K_EXPORTER_COMMONJS = 0
-K_EXPORTER_JAVASCRIPT_SIMPLES = 1
-K_EXPORTER_JAVA = 2
-K_EXPORTER_TYPESCRIPT = 3
-K_EXPORTER_SWIFT = 4
-K_EXPORTER_PHP = 5
-K_EXPORTER_PHP_LARAVEL = 6
-K_EXPORTER_TODOS = 7
+K_EXPORTER_JAVASCRIPT_SIMPLES = 0
+K_EXPORTER_COMMONJS = 1
+K_EXPORTER_TYPESCRIPT = 2
+K_EXPORTER_JAVA = 3
+K_EXPORTER_PHP = 4
+K_EXPORTER_PHP_LARAVEL = 5
+K_EXPORTER_C = 6
+K_EXPORTER_CPP = 7
+K_EXPORTER_PYTHON = 8
+K_EXPORTER_SWIFT = 9
+K_EXPORTER_OBJ_C = 10
+K_EXPORTER_TODOS = 11
 
 
+# Cores para o OUTPUT
 class bcolors:
     def __init__(self):
         print("")
 
     HEADER = '\033[95m'
+    TESTE = '\033[96m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
@@ -42,17 +67,13 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-def isInt(val):
-    return val == int(val)
-
-
+# classe de Modelo
 class Modelo:
     name = ""
     propriedades = []
     metodos = []
 
     def __init__(self):
-        # print("Model Class Inited")
         self.propriedades.clear()
         self.metodos.clear()
 
@@ -63,23 +84,27 @@ class Modelo:
         self.metodos.append(m)
 
 
+# Classe Propriedade
 class Propriedade:
     name = ""
     tipo = ""
     valor = None
 
 
+# Classe Metodo
 class Metodo:
     name = ""
     parametros = []
 
 
+# Classe Parametro
 class Parametro:
     name = ""
     tipo = ""
     valor = None
 
 
+# Funcao gerarExport em cima de um Modelo Preenchido
 def gerarExport(modelo):
     while True:  # This constructs an infinite loop
         # full exporter text options for user knowlegment
@@ -88,7 +113,9 @@ def gerarExport(modelo):
         for member in exporters:
             e = e + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
             count = count + 1
-        print("Escolha uma linguagem: " + e)
+        # print("Escolha uma linguagem: " + e)
+        info("Escolha uma linguagem: " + e)
+        abre()
 
         try:
             num = input("")
@@ -96,10 +123,12 @@ def gerarExport(modelo):
             if isInt(int(num)) and int(num) < len(exporters):
                 break
             else:
-                print("Escolha um número válido! Tente novamente...")
+                # print("Escolha um número válido! Tente novamente...")
+                erro("Escolha um número válido! Tente novamente...")
 
         except ValueError:
-            print("Oops!  Este não é um número válido! Tente novamente...")
+            # print("Oops!  Este não é um número válido! Tente novamente...")
+            erro("Oops!  Este não é um número válido! Tente novamente...")
 
     exportar = int(num)
 
@@ -134,34 +163,40 @@ def gerarExport(modelo):
         phpExporter(modelo)
         laravelExporter(modelo)
     else:
-        print("Other languages types soon")
+        # print("Other languages types soon")
+        aviso("Other languages types soon")
         gerarExport(modelo)
 
 
+# Funcao adiciona uma propriedade em um Modelo
 def addProperty(modelo, p):
     num = None
     while True:  # This constructs an infinite loop
         t = ""
         count = 0
         for member in tipos:
-            t = t + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
+            t = t + bcolors.WARNING + "[" + str(count) + "]" + bcolors.HEADER + member + bcolors.ENDC + " "
             count = count + 1
-        print("Escolha um tipo: " + t)
+        # print("Escolha um tipo: " + t)
+        info("Escolha o tipo da propriedade " + p + "\n" + t)
+        abre()
         num = input("")
 
         try:
             if isInt(int(num)) and int(num) < len(tipos):
                 break
             else:
-                print("Escolha um número válido! Tente novamente...")
+                erro("Escolha um número válido! Tente novamente...")
         except ValueError:
-            print("Oops!  Este não é um número válido! Tente novamente...")
+            erro("Oops!  Este não é um número válido! Tente novamente...")
 
     numerico = int(num)
     # obtem o item da lista de acordo com o indice inputado
     tipo = tipos.__getitem__(numerico)
 
-    valor = input("Entre valor inicial para o campo " + p + ": ")
+    info("Informe o valor padrão da Propriedade " + p + ":\n(Enter para vazio)")
+    abre()
+    valor = input("")
 
     property = Propriedade()
     property.name = p
@@ -173,14 +208,22 @@ def addProperty(modelo, p):
     modelo.addproperty(property)
 
 
+# Funcao adiciona um metodo em um Modelo
 def addMethod(modelo, m):
     modelo.addmethod(m)
 
 
+# Funcao verifica se um valor é int
+def isInt(val):
+    return val == int(val)
+
+
+# Funcao verifica se valor nao esta vazio
 def isNotEmpty(s):
     return bool(s and s.strip())
 
 
+# Funcao cria uma proppriedade em TypeScript
 def createPropertyTypeScript(p):
     r = ""
     # Strings
@@ -202,6 +245,7 @@ def createPropertyTypeScript(p):
     return r
 
 
+# Funcao cria uma proppriedade em Swift
 def createPropertySwift(p):
     r = ""
     # Strings
@@ -223,6 +267,7 @@ def createPropertySwift(p):
     return r
 
 
+# Funcao cria uma proppriedade em Javascript CommonJS
 def createPropertyCommonJS(p):
     # TODO: tratar ''' aspas quando for necessario.. criar lista de quem recebe?
     r = ""
@@ -235,7 +280,8 @@ def createPropertyCommonJS(p):
     return r
 
 
-# protected $_conn;
+# Funcao cria uma proppriedade em PHP
+# EX.: protected $_conn;
 def createPropertyPHP(p):
     # TODO: tratar ''' aspas quando for necessario.. criar lista de quem recebe?
     r = ""
@@ -247,13 +293,14 @@ def createPropertyPHP(p):
         r = r + "     public $_" + p.name + " = null;"
     return r
 
-#protected $fillable = ['nome', ...];
-def createPropertyLaravel(modelo):
 
+# Funcao cria uma proppriedade em PHP Laravel
+# EX.: protected $fillable = ['nome', ...];
+def createPropertyLaravel(modelo):
     r = ""
 
     for p in modelo.propriedades:
-        r = r + "'"  + p.name + "'" + ", "
+        r = r + "'" + p.name + "'" + ", "
 
     r = r.rstrip(', ')
 
@@ -262,6 +309,7 @@ def createPropertyLaravel(modelo):
     return r
 
 
+# Funcao cria uma Define propriedade em Javascript CommonJS
 def createDefinePropertyCommonJS(p):
     r = ""
     r = r + "     Object.defineProperty(this, '" + p.name + "', {" + "\n"
@@ -278,6 +326,7 @@ def createDefinePropertyCommonJS(p):
     return r
 
 
+# Funcao cria um Metodo em TypeScript
 def createMetodhTypeScript(m):
     r = ""
 
@@ -305,6 +354,7 @@ def createMetodhTypeScript(m):
     return "     " + m.name + "(" + r.rstrip(', ') + "){};" + "\n"
 
 
+# Funcao cria um Metodo em Swift
 def createMetodhSwift(m):
     r = ""
 
@@ -330,6 +380,7 @@ def createMetodhSwift(m):
     return "     func " + m.name + "(" + r.rstrip(', ') + "){};" + "\n"
 
 
+# Funcao cria um Metodo em Javacript CommonJS
 def createMetodhsCommonJS(m):
     parametros = ""
 
@@ -339,9 +390,7 @@ def createMetodhsCommonJS(m):
     return "     function " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
 
 
-#    public function ExecuteObject($sql, $data) {
-#        // stuff
-#    }
+# Funcao cria um Metodo em PHP
 def createMetodhsPHP(m):
     parametros = ""
 
@@ -351,6 +400,7 @@ def createMetodhsPHP(m):
     return "     public function " + m.name + "(" + parametros.rstrip(', ') + "){}" + "\n"
 
 
+# Funcao cria um Metodo em Laravel
 def createMetodhsLaravel(m):
     parametros = ""
 
@@ -360,8 +410,9 @@ def createMetodhsLaravel(m):
     return "     public function " + m.name + "(" + parametros.rstrip(', ') + "){}" + "\n"
 
 
+# Funcao Exportar Javascript CommonJS
 def commonjsExporter(modelo):
-    print('*' * 50)
+    info('*' * 50)
     # r = result
     r = ""
     r = r + "function " + modelo.name + "() {" + "\n"
@@ -374,13 +425,14 @@ def commonjsExporter(modelo):
     r = r + "}\n"
     r = r + "module.exports = " + modelo.name + ";" + "\n"
 
-    print(r)
-    print('*' * 50)
+    sucesso(r)
+    info('*' * 50)
     write_file(modelo.name + "_commonjs.js", r)
 
 
+# Funcao Exportar Javascript
 def jssimplestExporter(modelo):
-    print('*' * 50)
+    info('*' * 50)
 
     r = ""
     r = r + "function " + modelo.name + "() {" + "\n"
@@ -392,13 +444,14 @@ def jssimplestExporter(modelo):
         r = r + createMetodhsCommonJS(m) + "\n"
     r = r + "}" + "\n"
 
-    print(r)
-    print('*' * 50)
+    sucesso(r)
+    info('*' * 50)
     write_file(modelo.name + "_simplest.js", r)
 
 
+# Funcao Exportar TypeScript
 def typeScriptExporter(modelo):
-    print('*' * 50)
+    info('*' * 50)
     # r = result
     r = ""
     r = r + "class " + modelo.name + "{" + "\n"
@@ -410,13 +463,14 @@ def typeScriptExporter(modelo):
         r = r + createMetodhTypeScript(m) + "\n"
     r = r + "}\n"
 
-    print(r)
-    print('*' * 50)
+    sucesso(r)
+    info('*' * 50)
     write_file(modelo.name + "_typeScript.ts", r)
 
 
+# Funcao Exportar Swift
 def swiftExporter(modelo):
-    print('*' * 50)
+    info('*' * 50)
     # r = result
     r = ""
     r = r + "class " + modelo.name + "{" + "\n"
@@ -426,33 +480,14 @@ def swiftExporter(modelo):
         r = r + createMetodhSwift(m) + "\n"
     r = r + "}\n"
 
-    print(r)
-    print('*' * 50)
+    sucesso(r)
+    info('*' * 50)
     write_file(modelo.name + "_typeScript.ts", r)
 
 
-# class Database {
-#    protected $_conn;
-#
-#    public function __construct($connection) {
-#        $this->_conn = $connection;
-#    }
-#
-#    public function ExecuteObject($sql, $data) {
-#        // stuff
-#    }
-# }
-
-# abstract class Model {
-#    protected $_db;
-#
-#    public function __construct(Database $db) {
-#        $this->_db = $db;
-#    }
-# }
-
+# Funcao Exportar PHP
 def phpExporter(modelo):
-    print('*' * 50)
+    info('*' * 50)
     # r = result
     r = "<?php" + "\n"
     r = r + "class " + modelo.name + " extends Model {" + "\n"
@@ -468,13 +503,14 @@ def phpExporter(modelo):
 
     r = r + "}\n"
 
-    print(r)
-    print('*' * 50)
+    sucesso(r)
+    info('*' * 50)
     write_file(modelo.name + "_php.php", r)
 
 
+# Funcao Exportar PHP Laravel
 def laravelExporter(modelo):
-    print('*' * 50)
+    info('*' * 50)
     # r = result
     r = "<?php" + "\n"
     r = r + "namespace App;" + "\n"
@@ -490,25 +526,29 @@ def laravelExporter(modelo):
     for m in modelo.metodos:
         r = r + createMetodhsLaravel(m) + "\n"
 
-
     r = r + "   public function __construct() {" + "\n"
     # $this->_conn = $connection;
     r = r + "   }" + "\n"
 
     r = r + "}\n"
 
-    print(r)
-    print('*' * 50)
+    sucesso(r)
+    info('*' * 50)
     write_file(modelo.name + "_laravel.php", r)
 
 
+# Funcao Exportar Java
 def javaExporter(modelo):
-    print("Java exporter Under development")
+    erro("Java exporter Under development")
 
 
+# Funcao Loop Propriedades do Modelo
 def whileProperties(modelo):
+    info("Agora vamos definir as propriedades e atributos da classe " + modelo.name)
     while True:
-        p = input("Entre o nome da propriedade (ou Enter para sair): ").replace(" ", "").replace("\t", "")
+        info("Informe o nome da propriedade:\n(Enter para sair)")
+        abre()
+        p = input("").replace(" ", "").replace("\t", "")
         if not p:
             break
         # modelo.addproperty(p)
@@ -519,10 +559,14 @@ def whileProperties(modelo):
         # print("Property While loop has exited")
 
 
+# Funcao Loop Parametros do Metodo
 def whileMethodsParameters(metodo):
+    info("Agora vamos definir os parametros do método " + metodo.name)
     lista = []
     while True:
-        i = input("Entre o nome do parametro para o método " + metodo.name + ": ").replace(" ", "").replace("\t", "")
+        info("Entre o nome do parametro para o método " + metodo.name + ": ")
+        abre()
+        i = input("").replace(" ", "").replace("\t", "")
         if not i:
             break
         p = Parametro()
@@ -537,16 +581,17 @@ def whileMethodsParameters(metodo):
             for member in tipos:
                 t = t + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
                 count = count + 1
-            print("Escolha um tipo para o parâmetro " + p.name + ": " + t)
+            info("Escolha um tipo para o parâmetro " + p.name + ": " + t)
+            abre()
             num = input("")
 
             try:
                 if isInt(int(num)) and int(num) < len(tipos):
                     break
                 else:
-                    print("Escolha um número válido! Tente novamente...")
+                    erro("Escolha um número válido! Tente novamente...")
             except ValueError:
-                print("Oops!  Este não é um número válido! Tente novamente...")
+                erro("Oops!  Este não é um número válido! Tente novamente...")
 
         numerico = int(num)
         # obtem o item da lista de acordo com o indice inputado
@@ -554,7 +599,9 @@ def whileMethodsParameters(metodo):
         # p.tipo = str(numerico)
         p.tipo = tipo
 
-        valor = input("Entre valor inicial para o parametro " + p.name + ": ")
+        info("Entre valor inicial para o parametro " + p.name + ": ")
+        abre()
+        valor = input("")
         p.valor = valor
 
         # ok
@@ -563,6 +610,7 @@ def whileMethodsParameters(metodo):
     metodo.parametros = lista
 
 
+# Funcao Converte o tipo para a linguagem especifica
 # recebe o tipo em texto e o exporter em indice do array
 def converteTipos(tipo, exporter):
     # CommonJS
@@ -606,13 +654,15 @@ def converteTipos(tipo, exporter):
         return ""
 
 
+# Funcao Loop Metodos do Modelo
 def whileMethods(modelo):
     lista = []
     while True:
         try:
-            i = input("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ").replace(" ",
-                                                                                                                 "").replace(
-                "\t", "")
+
+            info("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ")
+            abre()
+            i = input("").replace(" ", "").replace("\t", "")
             # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
             if not i:
                 break
@@ -628,11 +678,24 @@ def whileMethods(modelo):
             modelo.metodos = lista
 
 
+def intro():
+    header("Bem vindo ao Gerador de Modelos Versão 0.35Beta")
+    header("")
+    header("Siga as instruções conforme vão sendo solicitadas.")
+    header("")
+
+
+# Funcao Pergunta Nome do Modelos
 def startAskForModel():
+    intro()
     modelo = Modelo()
-    print('*' * 50)
+    # info('*' * 50)
     while True:
-        modelo.name = input("Entre o Nome da Classe 'Model': ").replace(" ", "").replace("\t", "")
+
+        info("Como irá chamar sua Classe?")
+        abre()
+        modelo.name = input("").replace(" ", "").replace("\t", "")
+        fecha()
         if isNotEmpty(modelo.name):
             break
 
@@ -641,11 +704,13 @@ def startAskForModel():
     gerarExport(modelo)
 
 
+# Funcao cria diretorio
 def createDirectory(dir):
     if not os.path.exists(dir):
         os.mkdir(dir)
 
 
+# Funcao escreve arquivo de output
 def write_file(file, data):
     """
     this function write data to file
@@ -660,3 +725,41 @@ def write_file(file, data):
 
     with open(file_name, 'wb') as x_file:
         x_file.write(bytes(data, encoding="UTF-8"))
+
+
+def header(mensagem):
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+    print(bcolors.HEADER + mensagem + bcolors.ENDC)
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+def info(mensagem):
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+    print(bcolors.OKBLUE + mensagem + bcolors.ENDC)
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+def sucesso(mensagem):
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+    print(bcolors.TESTE + mensagem + bcolors.ENDC)
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+def erro(mensagem):
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+    print(bcolors.FAIL + mensagem + bcolors.ENDC)
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+def aviso(mensagem):
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+    print(bcolors.WARNING + mensagem + bcolors.ENDC)
+    # print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+def abre():
+    print(bcolors.OKGREEN)
+
+
+def fecha():
+    print(bcolors.ENDC)
