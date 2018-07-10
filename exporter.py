@@ -194,7 +194,7 @@ def addProperty(modelo, p):
     # obtem o item da lista de acordo com o indice inputado
     tipo = tipos.__getitem__(numerico)
 
-    info("Informe o valor padrão da Propriedade " + p + ":\n(Enter para vazio)")
+    info("Informe o valor padrão da Propriedade " + p + " ou Enter para valor vazio:")
     abre()
     valor = input("")
 
@@ -206,6 +206,8 @@ def addProperty(modelo, p):
 
     # modelo.propriedades.append(property)
     modelo.addproperty(property)
+
+    sucesso("A propriedade " + p + " do tipo " + tipo + " foi incluida na classe " + modelo.name + ".")
 
 
 # Funcao adiciona um metodo em um Modelo
@@ -546,7 +548,7 @@ def javaExporter(modelo):
 def whileProperties(modelo):
     info("Agora vamos definir as propriedades e atributos da classe " + modelo.name)
     while True:
-        info("Informe o nome da propriedade:\n(Enter para sair)")
+        info("Informe o nome da propriedade ou Enter para encerrar as propriedades:")
         abre()
         p = input("").replace(" ", "").replace("\t", "")
         if not p:
@@ -564,7 +566,7 @@ def whileMethodsParameters(metodo):
     info("Agora vamos definir os parametros do método " + metodo.name)
     lista = []
     while True:
-        info("Entre o nome do parametro para o método " + metodo.name + ": ")
+        info("Informe o nome do parametro para o método " + metodo.name + ": ")
         abre()
         i = input("").replace(" ", "").replace("\t", "")
         if not i:
@@ -599,7 +601,7 @@ def whileMethodsParameters(metodo):
         # p.tipo = str(numerico)
         p.tipo = tipo
 
-        info("Entre valor inicial para o parametro " + p.name + ": ")
+        info("Informe valor inicial para o parametro " + p.name + ": ")
         abre()
         valor = input("")
         p.valor = valor
@@ -660,7 +662,7 @@ def whileMethods(modelo):
     while True:
         try:
 
-            info("Entre o nome do Metodo para a Classe " + modelo.name + " (ou Enter para sair): ")
+            info("Informe o nome do Metodo para a Classe " + modelo.name + " ou Enter para encerrar os métodos:")
             abre()
             i = input("").replace(" ", "").replace("\t", "")
             # i = input("Entre o nome do Metodo: Metodo(Param1,Param2,ParamN, callback()) (ou Enter para sair): ")
