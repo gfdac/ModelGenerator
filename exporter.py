@@ -159,6 +159,7 @@ def gerarExport(modelo):
         commonjsExporter(modelo)
         jssimplestExporter(modelo)
         javaExporter(modelo)
+        typeScriptExporter(modelo)
         swiftExporter(modelo)
         phpExporter(modelo)
         laravelExporter(modelo)
@@ -282,6 +283,28 @@ def createPropertyCommonJS(p):
     return r
 
 
+# Funcao cria uma proppriedade em Java
+def createPropertyJava(p):
+    r = ""
+    # Strings
+    if p.tipo is not None and p.valor is not None and p.valor is not "" and (
+            p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
+        r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = '" + p.valor + "';"
+    # Numbers
+    elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+            p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
+        r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
+    # Boolean
+    elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+            p.tipo.lower() == K_TIPO_BOOLEAN.lower()):
+        r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
+    elif p.tipo is not None:
+        r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
+    else:
+        r = r + "     " + "Undefinded " + p.name + " = null;"
+    return r
+
+
 # Funcao cria uma proppriedade em PHP
 # EX.: protected $_conn;
 def createPropertyPHP(p):
@@ -390,6 +413,29 @@ def createMetodhsCommonJS(m):
         parametros = parametros + param.name + ", "
 
     return "     function " + m.name + "(" + parametros.rstrip(', ') + "){};" + "\n"
+
+
+# Funcao cria um Metodo em Java
+def createMetodhsJava(m):
+    r = ""
+
+    for param in m.parametros:
+
+        if param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
+                param.tipo.lower() == K_TIPO_STRING.lower() or param.tipo.lower() == K_TIPO_TEXT.lower() or param.tipo.lower() == K_TIPO_VARCHAR.lower()):
+            r = r + converteTipos(param.tipo, K_EXPORTER_JAVA) + " " + param.name + " = '" + str(param.valor) + "', "
+
+        elif param.tipo is not None and param.tipo is not "" and param.valor is not None and param.valor is not "" and (
+                param.tipo.lower() == K_TIPO_DECIMAL.lower() or param.tipo.lower() == K_TIPO_INTEGER.lower() or param.tipo.lower() == K_TIPO_NUMBER.lower() or param.tipo.lower() == K_TIPO_FLOAT.lower()):
+            r = r + converteTipos(param.tipo, K_EXPORTER_JAVA) + " " + param.name + " = " + str(param.valor) + ", "
+
+
+        elif param.tipo is not None and param.tipo is not "":
+            r = r + converteTipos(param.tipo, K_EXPORTER_JAVA) + " " + param.name + " = '" + "null" + ", "
+        else:
+            r = r + "Undefined " + param.name + " = '" + "null" + ", "
+
+    return "     " + m.name + "(" + r.rstrip(', ') + "){};" + "\n"
 
 
 # Funcao cria um Metodo em PHP
@@ -541,7 +587,19 @@ def laravelExporter(modelo):
 
 # Funcao Exportar Java
 def javaExporter(modelo):
-    erro("Java exporter Under development")
+    info('*' * 50)
+
+    r = ""
+    r = r + "public class " + modelo.name + "{" + "\n"
+    for p in modelo.propriedades:
+        r = r + createPropertyJava(p) + "\n"
+    for m in modelo.metodos:
+        r = r + createMetodhsJava(m) + "\n"
+    r = r + "}" + "\n"
+
+    sucesso(r)
+    info('*' * 50)
+    write_file(modelo.name + ".java", "java", r)
 
 
 # Funcao Loop Propriedades do Modelo
@@ -623,7 +681,16 @@ def converteTipos(tipo, exporter):
         return ""
     # Java
     elif exporter == K_EXPORTER_JAVA:
-        return ""
+        if tipo.lower() == K_TIPO_INTEGER.lower():
+            return "Integer"
+        if tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
+            return "Double"
+        elif tipo.lower() == K_TIPO_STRING.lower() or tipo.lower() == K_TIPO_VARCHAR.lower() or tipo.lower() == K_TIPO_TEXT.lower():
+            return "String"
+        elif tipo.lower() == K_TIPO_BOOLEAN.lower():
+            return "Boolean"
+        else:
+            return ""
     # TypeScript
     elif exporter == K_EXPORTER_TYPESCRIPT:
         if tipo.lower() == K_TIPO_INTEGER.lower() or tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
@@ -711,10 +778,10 @@ def createDirectory(dir):
     if not os.path.exists(dir):
         os.mkdir(dir)
 
+
 def getDate():
     import time
     return time.strftime("%Y%m%d")
-
 
 
 # Funcao escreve arquivo de output
