@@ -429,7 +429,7 @@ def commonjsExporter(modelo):
 
     sucesso(r)
     info('*' * 50)
-    write_file(modelo.name + "_commonjs.js", r)
+    write_file(modelo.name + ".js", "commonjs", r)
 
 
 # Funcao Exportar Javascript
@@ -448,7 +448,7 @@ def jssimplestExporter(modelo):
 
     sucesso(r)
     info('*' * 50)
-    write_file(modelo.name + "_simplest.js", r)
+    write_file(modelo.name + ".js", "simplest", r)
 
 
 # Funcao Exportar TypeScript
@@ -467,7 +467,7 @@ def typeScriptExporter(modelo):
 
     sucesso(r)
     info('*' * 50)
-    write_file(modelo.name + "_typeScript.ts", r)
+    write_file(modelo.name + ".ts", "typeScript", r)
 
 
 # Funcao Exportar Swift
@@ -484,7 +484,7 @@ def swiftExporter(modelo):
 
     sucesso(r)
     info('*' * 50)
-    write_file(modelo.name + "_typeScript.ts", r)
+    write_file(modelo.name + ".ts", "swift", r)
 
 
 # Funcao Exportar PHP
@@ -507,7 +507,7 @@ def phpExporter(modelo):
 
     sucesso(r)
     info('*' * 50)
-    write_file(modelo.name + "_php.php", r)
+    write_file(modelo.name + ".php", "php", r)
 
 
 # Funcao Exportar PHP Laravel
@@ -536,7 +536,7 @@ def laravelExporter(modelo):
 
     sucesso(r)
     info('*' * 50)
-    write_file(modelo.name + "_laravel.php", r)
+    write_file(modelo.name + ".php", "laravel", r)
 
 
 # Funcao Exportar Java
@@ -711,19 +711,28 @@ def createDirectory(dir):
     if not os.path.exists(dir):
         os.mkdir(dir)
 
+def getDate():
+    import time
+    return time.strftime("%Y%m%d")
+
+
 
 # Funcao escreve arquivo de output
-def write_file(file, data):
+def write_file(file, folder, data):
     """
     this function write data to file
     :param file:
     :param data:
     :return:
     """
+
+    agora = getDate()
     # file_name = r'D:\log.txt'
-    file_name = "./exporter/" + file
+    file_name = "./exporter/" + agora + "/" + folder + "/" + file
 
     createDirectory("./exporter")
+    createDirectory("./exporter/" + agora)
+    createDirectory("./exporter/" + agora + "/" + folder)
 
     with open(file_name, 'wb') as x_file:
         x_file.write(bytes(data, encoding="UTF-8"))
