@@ -3,14 +3,14 @@
 
 import exporter as ex
 
-database = "exchange"
+database = "escambo"
 
 modelos = []
 
 import pymysql.cursors
 
 # Connect to the database
-connection = pymysql.connect(host='localhost',
+connection = pymysql.connect(host='127.0.0.1',
                              user='root',
                              password='root',
                              port=3306,

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import re
+
 
 tipos = ["String",
          "Boolean",
@@ -29,10 +31,12 @@ K_TIPO_STRING = 'String'
 K_TIPO_VARCHAR = 'Varchar'
 K_TIPO_TEXT = 'Text'
 K_TIPO_BOOLEAN = 'Boolean'
+K_TIPO_INT = "Int"
 K_TIPO_INTEGER = "Integer"
 K_TIPO_DECIMAL = "Decimal"
 K_TIPO_NUMBER = "Number"
 K_TIPO_FLOAT = "Float"
+K_TIPO_TIMESTAMP = "Timestamp"
 K_TIPO_ARRAY = "Array"
 K_TIPO_OBJETO = "Object"
 K_TIPO_OTHERS = "Others..."
@@ -286,22 +290,29 @@ def createPropertyCommonJS(p):
 # Funcao cria uma proppriedade em Java
 def createPropertyJava(p):
 		r = ""
-		# Strings
-		if p.tipo is not None and p.valor is not None and p.valor is not "" and (
-						p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
-				r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = '" + p.valor + "';"
-		# Numbers
-		elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
-						p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
-				r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
-		# Boolean
-		elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
-						p.tipo.lower() == K_TIPO_BOOLEAN.lower()):
-				r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
-		elif p.tipo is not None:
-				r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
-		else:
-				r = r + "     " + "Undefinded " + p.name + " = null;"
+		try:
+				# Strings
+				if p.tipo is not None and p.valor is not None and p.valor is not "" and (
+								p.tipo.lower() == K_TIPO_STRING.lower() or p.tipo.lower() == K_TIPO_TEXT.lower() or p.tipo.lower() == K_TIPO_VARCHAR.lower()):
+						r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = '" + p.valor + "';"
+				# Numbers
+				elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+								p.tipo.lower() == K_TIPO_NUMBER.lower() or p.tipo.lower() == K_TIPO_FLOAT.lower() or p.tipo.lower() == K_TIPO_INTEGER.lower() or p.tipo.lower() == K_TIPO_DECIMAL.lower()):
+						r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
+				# Boolean
+				elif p.tipo is not None and p.valor is not None and p.valor is not "" and (
+								p.tipo.lower() == K_TIPO_BOOLEAN.lower()):
+						r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + p.valor + ";"
+				elif p.tipo is not None:
+						r = r + "     " + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + " = " + " null " + ";"
+				else:
+						r = r + "     " + "Undefined " + p.name + " = null;"
+		except TypeError as e:
+				r = "ERRO " + str(e)
+		
+		finally:
+				return r
+		
 		return r
 
 
@@ -647,7 +658,7 @@ def whileProperties(modelo):
 				# prop.name = p
 				# prop.tipo = ""
 				addProperty(modelo, p)
-				# print("Property While loop has exited")
+		# print("Property While loop has exited")
 
 
 # Funcao Loop Parametros do Metodo
@@ -704,6 +715,12 @@ def whileMethodsParameters(metodo):
 # Funcao Converte o tipo para a linguagem especifica
 # recebe o tipo em texto e o exporter em indice do array
 def converteTipos(tipo, exporter):
+		print ("converteTipos: " + tipo)
+		
+		#regex para remover innt(11) varchar(255) etc
+		tipo = " ".join(re.findall("[a-zA-Z]+", tipo))
+		print ( tipo)
+		
 		# CommonJS
 		if exporter == K_EXPORTER_COMMONJS:
 				return ""
@@ -712,7 +729,7 @@ def converteTipos(tipo, exporter):
 				return ""
 		# Java
 		elif exporter == K_EXPORTER_JAVA:
-				if tipo.lower() == K_TIPO_INTEGER.lower():
+				if tipo.lower() == K_TIPO_INTEGER.lower() or tipo.lower() == K_TIPO_INT.lower():
 						return "int"
 				if tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
 						return "java.math.BigDecimal"
@@ -720,6 +737,11 @@ def converteTipos(tipo, exporter):
 						return "String"
 				elif tipo.lower() == K_TIPO_BOOLEAN.lower():
 						return "boolean"
+				elif tipo.lower() == K_TIPO_TIMESTAMP.lower():
+						return "Date"
+				#tipo desconhecido
+				elif tipo is not None:
+						return tipo.lower()
 				else:
 						return ""
 		# TypeScript
@@ -732,7 +754,7 @@ def converteTipos(tipo, exporter):
 						return "boolean"
 				else:
 						return "any"
-						# TODO: create for other types like tuples, arrays, enum, void, null and Undefined
+				# TODO: create for other types like tuples, arrays, enum, void, null and Undefined
 		
 		# Swift
 		elif exporter == K_EXPORTER_SWIFT:
@@ -772,8 +794,8 @@ def whileMethods(modelo):
 						whileMethodsParameters(m)
 						
 						lista.append(m)
-						# modelo.addmethod(m)
-						# print("Method While loop has exited")
+				# modelo.addmethod(m)
+				# print("Method While loop has exited")
 				finally:
 						modelo.metodos = lista
 
@@ -839,31 +861,41 @@ def write_file(file, folder, data):
 def header(mensagem):
 		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 		print(bcolors.HEADER + mensagem + bcolors.ENDC)
-		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 
 
 def info(mensagem):
 		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 		print(bcolors.OKBLUE + mensagem + bcolors.ENDC)
-		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 
 
 def sucesso(mensagem):
 		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 		print(bcolors.TESTE + mensagem + bcolors.ENDC)
-		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 
 
 def erro(mensagem):
 		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 		print(bcolors.FAIL + mensagem + bcolors.ENDC)
-		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 
 
 def aviso(mensagem):
 		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 		print(bcolors.WARNING + mensagem + bcolors.ENDC)
-		# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
+
+
+# print(ex.bcolors.OKGREEN + "*" * 90 + ex.bcolors.ENDC)
 
 
 def abre():
