@@ -13,8 +13,8 @@ tipos = ["String",
          "Object",
          "Other ->"]
 
-exporters = ["Javascript Simples",
-             "Javascript CommonJS",
+exporters = ["JavaScript",
+             "CommonJS",
              "TypeScript",
              "Java",
              "PHP",
@@ -24,6 +24,7 @@ exporters = ["Javascript Simples",
              "Python",
              "Swift",
              "Objective-C",
+             "C#",
              "Todos"]
 
 # CONSTANTS for Exporters and Tipos
@@ -52,7 +53,8 @@ K_EXPORTER_CPP = 7
 K_EXPORTER_PYTHON = 8
 K_EXPORTER_SWIFT = 9
 K_EXPORTER_OBJ_C = 10
-K_EXPORTER_TODOS = 11
+K_EXPORTER_CSHARP = 11
+K_EXPORTER_TODOS = 12
 
 
 # Cores para o OUTPUT
@@ -168,14 +170,12 @@ def gerarExport(modelo):
 				phpExporter(modelo)
 				laravelExporter(modelo)
 		else:
-				# print("Other languages types soon")
-				aviso("Other languages types soon")
+				aviso("Other languages types soon...")
 				gerarExport(modelo)
 
 
 # Funcao adiciona uma propriedade em um Modelo
 def addProperty(modelo, p):
-		num = None
 		while True:  # This constructs an infinite loop
 				t = ""
 				count = 0
@@ -807,7 +807,7 @@ def intro():
 		header("")
 
 
-# Funcao Pergunta Nome do Modelos
+# Funcao Pergunta Nome do Modelo para input manual
 def startAskForModel():
 		intro()
 		modelo = Modelo()
