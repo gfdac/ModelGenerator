@@ -586,15 +586,54 @@ def laravelExporter(modelo):
 
 
 # Funcao Exportar Java
+def propriedadesConstrutorJava(modelo):
+
+    #devolve em formato unico string concatenando tipo e nome do parametro
+    #Ex: String nome, int idade
+    r = ""
+    for p in modelo.propriedades:
+        r = r + converteTipos(p.tipo, K_EXPORTER_JAVA) + " " + p.name + ", "
+
+
+
+    #remove o ultimo  ", "
+    #r = r.replace(', ', '')[:-2]
+    r = r[:-2]
+
+    return r
+
+
 def javaExporter(modelo):
     info('*' * 50)
 
     r = ""
-    r = r + "public class " + modelo.name + "{" + "\n"
+    r = r + "public class " + modelo.name + " {" + "\n"
     for p in modelo.propriedades:
         r = r + createPropertyJava(p) + "\n"
     for m in modelo.metodos:
         r = r + createMetodhsJava(m) + "\n"
+
+
+    #Construtor default
+    r = r + "     //Construtor default" + "\n"
+    r = r + "     public " + modelo.name + " () {" + "\n"
+    # $this->_conn = $connection;
+    r = r + "     }" + "\n\n"
+
+    # Construtor com os atributos
+    r = r + "     //Construtor com os atributos" + "\n"
+    r = r + "     public " + modelo.name + " ("+ propriedadesConstrutorJava(modelo) + ") {" + "\n"
+    # $this->_conn = $connection;
+    r = r + "     }" + "\n\n"
+
+
+
+    #
+    # public Employee(String name) {
+    #     this.name = name;
+    # }
+
+
     r = r + "}" + "\n"
 
     sucesso(r)
@@ -682,13 +721,13 @@ def converteTipos(tipo, exporter):
     # Java
     elif exporter == K_EXPORTER_JAVA:
         if tipo.lower() == K_TIPO_INTEGER.lower():
-            return "Integer"
+            return "int"
         if tipo.lower() == K_TIPO_FLOAT.lower() or tipo.lower() == K_TIPO_DECIMAL.lower() or tipo.lower() == K_TIPO_NUMBER.lower():
-            return "Double"
+            return "java.math.BigDecimal"
         elif tipo.lower() == K_TIPO_STRING.lower() or tipo.lower() == K_TIPO_VARCHAR.lower() or tipo.lower() == K_TIPO_TEXT.lower():
             return "String"
         elif tipo.lower() == K_TIPO_BOOLEAN.lower():
-            return "Boolean"
+            return "boolean"
         else:
             return ""
     # TypeScript
