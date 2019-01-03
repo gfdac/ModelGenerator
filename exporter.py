@@ -613,26 +613,21 @@ def javaExporter(modelo):
     for m in modelo.metodos:
         r = r + createMetodhsJava(m) + "\n"
 
+    ##Linha vazia
+    r = r + "\n"
 
     #Construtor default
     r = r + "     //Construtor default" + "\n"
     r = r + "     public " + modelo.name + " () {" + "\n"
-    # $this->_conn = $connection;
     r = r + "     }" + "\n\n"
 
     # Construtor com os atributos
     r = r + "     //Construtor com os atributos" + "\n"
     r = r + "     public " + modelo.name + " ("+ propriedadesConstrutorJava(modelo) + ") {" + "\n"
-    # $this->_conn = $connection;
+    
+    for p in modelo.propriedades:
+        r = r + "            this." + p.name + " = " + p.name + ";\n"
     r = r + "     }" + "\n\n"
-
-
-
-    #
-    # public Employee(String name) {
-    #     this.name = name;
-    # }
-
 
     r = r + "}" + "\n"
 
