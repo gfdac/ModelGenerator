@@ -715,11 +715,11 @@ def whileMethodsParameters(metodo):
 # Funcao Converte o tipo para a linguagem especifica
 # recebe o tipo em texto e o exporter em indice do array
 def converteTipos(tipo, exporter):
-		print ("converteTipos: " + tipo)
+		# print ("converteTipos: " + tipo)
 		
 		#regex para remover innt(11) varchar(255) etc
 		tipo = " ".join(re.findall("[a-zA-Z]+", tipo))
-		print ( tipo)
+		# print ( tipo)
 		
 		# CommonJS
 		if exporter == K_EXPORTER_COMMONJS:
