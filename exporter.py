@@ -114,7 +114,7 @@ def gerarExport(modelo):
 						e = e + " - " + bcolors.OKBLUE + "[" + str(count) + "]" + bcolors.ENDC + member
 						count = count + 1
 				# print("Escolha uma linguagem: " + e)
-				info("Escolha uma linguagem: " + e)
+				info("Escolha uma linguagem: " + "\n" + e)
 				abre()
 				
 				try:
